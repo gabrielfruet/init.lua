@@ -7,7 +7,6 @@ return {
         build=":TSUpdate"
     },
     'kyazdani42/nvim-web-devicons',
-    'kyazdani42/nvim-tree.lua',
     "nvim-treesitter/playground",
     "romgrk/nvim-treesitter-context",
     "folke/tokyonight.nvim",
