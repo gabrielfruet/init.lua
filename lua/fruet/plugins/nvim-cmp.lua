@@ -25,8 +25,9 @@ return{
                 documentation = cmp.config.window.bordered(),
             },
             mapping = cmp.mapping.preset.insert({
-                ['<C-n>'] =  cmp.mapping.select_prev_item(),
-                ['<C-p>'] = cmp.mapping.select_next_item(),
+                ['<tab>'] =  cmp.mapping.select_next_item(),
+                ['<C-p>'] =  cmp.mapping.select_prev_item(),
+                ['<C-n>'] = cmp.mapping.select_next_item(),
                 ['<C-b>'] = cmp.mapping.scroll_docs(-4),
                 ['<C-f>'] = cmp.mapping.scroll_docs(4),
                 ['<C-Space>'] = cmp.mapping.complete(),
@@ -66,15 +67,9 @@ return{
             sources = cmp.config.sources({
                 { name = 'path' }
             }, {
-                    {
-                        name = 'cmdline',
-                        option = {
-                            ignore_cmds = { 'Man', '!' }
-                        }
-                    }
-                })
+                { name = 'cmdline' }
+            })
         })
-
         -- Set up lspconfig.
         --local capabilities = require('cmp_nvim_lsp').default_capabilities()
         -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.

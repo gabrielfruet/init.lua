@@ -2,7 +2,7 @@ return {
     'kyazdani42/nvim-tree.lua',
     enabled=false,
     lazy=false,
-    dependencies = 'kyazdani42/nvim-web-devicons',
+    dependencies = 'nvim-tree/nvim-web-devicons',
     config = function ()
         vim.cmd[[hi NvimTreeNormal guibg=NONE ctermbg=NONE]]
         require('nvim-tree').setup{
