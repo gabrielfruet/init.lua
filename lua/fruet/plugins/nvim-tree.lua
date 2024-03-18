@@ -1,5 +1,6 @@
 return {
     'kyazdani42/nvim-tree.lua',
+    enabled=false,
     lazy=false,
     dependencies = 'kyazdani42/nvim-web-devicons',
     config = function ()

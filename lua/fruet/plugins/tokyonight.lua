@@ -1,12 +1,8 @@
 return {
     "folke/tokyonight.nvim",
+    priority=101,
     config=function ()
         vim.g.tokyonight_dark_float = false
-        vim.cmd([[
-        autocmd ColorScheme * highlight Normal ctermbg=NONE guibg=NONE
-        autocmd ColorScheme * hi Normal ctermbg=none
-        hi NvimTreeNormal guibg=none
-        ]])
         vim.cmd[[
         colorscheme tokyonight
         ]]

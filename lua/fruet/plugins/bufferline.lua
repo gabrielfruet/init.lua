@@ -14,6 +14,13 @@ return {
                     text_align ="center",
                     separator = true,
                     highlights = "NvimTreeNormal"
+                },
+                {
+                    filetype = "neo-tree",
+                    text = "File Explorer",
+                    text_align ="center",
+                    separator = true,
+                    highlights = {"NeoTreeNormal", "NeoTreeNormalNC"}
                 }
             }
         },
