@@ -1,12 +1,13 @@
 return {
     'kyazdani42/nvim-tree.lua',
     config = function ()
+        local api = require('nvim-tree.api')
+        local map = vim.keymap.set
+
         vim.g.loaded_netrw = 1
         vim.g.loaded_netrwPlugin = 1
 
-        local map = vim.api.nvim_set_keymap
-
-        map('n', '<c-n>', '<cmd>NvimTreeToggle<cr>', { noremap = true })
+        map('n', '<c-n>', api.tree.toggle, { noremap = true })
     end
 }
 

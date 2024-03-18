@@ -1,8 +1,6 @@
 require('fruet.set')
---require('fruet.packer')
 require('fruet.lazy')
 require('fruet.keymap')
-require('fruet.nvim-tree.keymap')
 require('fruet.telescope.keymap')
 require('fruet.mason')
 require('fruet.cmp')

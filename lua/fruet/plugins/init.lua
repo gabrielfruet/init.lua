@@ -3,9 +3,6 @@ return {
     "nvim-lua/popup.nvim",
     "nvim-telescope/telescope.nvim",
     "nvim-telescope/telescope-ui-select.nvim",
-    {"nvim-treesitter/nvim-treesitter",
-        build=":TSUpdate"
-    },
     'kyazdani42/nvim-web-devicons',
     "nvim-treesitter/playground",
     "romgrk/nvim-treesitter-context",
