@@ -1,0 +1,49 @@
+snippet iosync
+	ios_base::sync_with_stdio(0), cin.tie(0);
+
+snippet maincp
+	#include <iostream>
+	#include <algorithm>
+	#define ll long long
+	#define vec vector<int>
+	#define iosync ios_base::sync_with_stdio(0), cin.tie(0)
+	
+	using namespace std;
+
+	int main(){
+		iosync;
+		
+		return 0;
+	}
+
+
+snippet mainfn
+	int main(){
+		${0}
+		return 0;
+	}
+
+snippet inc
+	#include <${1}>
+
+snippet defll
+	#define ll long long
+
+snippet def
+	#define ${1} ${2}
+
+snippet vec
+	vector<${1:int}> ${2};
+
+snippet map
+	map<${1},${2}> ${3};
+
+snippet umap
+	unordered_map<${1},${2}> ${3};
+
+snippet set 
+	set<${1}> ${2};
+
+snippet uset
+	unordered_set<${1}> ${2};
+
