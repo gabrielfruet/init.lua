@@ -5,7 +5,6 @@ return {
     "romgrk/nvim-treesitter-context",
     "folke/tokyonight.nvim",
     "themercorp/themer.lua",
-    'nvim-lualine/lualine.nvim',
     "sbdchd/neoformat",
     "TimUntersberger/neogit",
     "windwp/nvim-autopairs",
