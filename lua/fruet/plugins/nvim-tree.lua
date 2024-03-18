@@ -3,6 +3,7 @@ return {
     lazy=false,
     dependencies = 'kyazdani42/nvim-web-devicons',
     config = function ()
+        vim.cmd[[hi NvimTreeNormal guibg=NONE ctermbg=NONE]]
         require('nvim-tree').setup{
             sort = {
                 sorter = "case_sensitive",
@@ -24,6 +25,8 @@ return {
         vim.g.loaded_netrwPlugin = 1
 
         map('n', '<c-n>', api.tree.toggle, { noremap = true })
+        map('n', '<leader>v', api.node.open.vertical, { noremap = true})
+        map('n', '<leader>h', api.node.open.horizontal, { noremap = true})
     end,
 }
 

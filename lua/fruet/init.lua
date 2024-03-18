@@ -1,10 +1,5 @@
 require('fruet.set')
 require('fruet.lazy')
 require('fruet.keymap')
-require('fruet.lualine')
-require('fruet.theme.transparent')
-require('fruet.theme.tokyonight')
 require('fruet.commands.update')
 require('fruet.commands.autorun')
-
-require('nvim-autopairs').setup()
