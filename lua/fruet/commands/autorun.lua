@@ -14,14 +14,18 @@ local function get_lang(filepath)
     return lang
 end
 
-local function get_command(filepath)
-    local lang = get_lang(filepath)
-    return lang_command[lang](filepath)
+local function get_command(filepath, lang)
+    local create_command = lang_command[lang]
+    if create_command == nil then
+        return nil
+    end
+    return create_command(filepath)
 end
 
 local function run()
     local filepath = vim.fn.expand('%:p')
-    local command = get_command(filepath)
+    local language = get_lang(filepath)
+    local command = get_command(filepath, language)
     local output
     if command ~= nil then
         output = vim.fn.systemlist(command)
@@ -70,6 +74,8 @@ local function run()
         vim.api.nvim_buf_add_highlight(0, -1, 'RunMessage', last_line, 0, -1)
     end
 end
+
+vim.api.nvim_create_user_command('AutoRun', function() run() end, {})
 
 return {
     run = run

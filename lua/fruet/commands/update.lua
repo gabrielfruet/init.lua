@@ -1,5 +1,3 @@
-local exec = vim.cmd
-
 local function update_plugins()
     print("Updating plugins...")
 
@@ -25,6 +23,8 @@ local function update_plugins()
 
     print("Plugins updated.")
 end
+
+vim.api.nvim_create_user_command('UpdateAll', update_plugins, {})
 
 return {
     update_plugins = update_plugins

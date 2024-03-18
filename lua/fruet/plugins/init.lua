@@ -9,8 +9,6 @@ return {
     "TimUntersberger/neogit",
     "windwp/nvim-autopairs",
     "xiyaowong/nvim-transparent",
-    'L3MON4D3/LuaSnip',
     'rafamadriz/friendly-snippets',
     'onsails/lspkind-nvim',
-    'folke/neodev.nvim',
 }
