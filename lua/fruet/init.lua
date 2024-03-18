@@ -1,12 +1,10 @@
 require('fruet.set')
 require('fruet.lazy')
 require('fruet.keymap')
-require('fruet.telescope.keymap')
 require('fruet.mason')
 require('fruet.cmp')
 require('fruet.lspsetup')
 require('fruet.treesitter')
-
 require('fruet.lualine')
 require('fruet.theme.transparent')
 require('fruet.theme.tokyonight')

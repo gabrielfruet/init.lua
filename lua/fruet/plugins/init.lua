@@ -1,8 +1,6 @@
 return {
     "nvim-lua/plenary.nvim",
     "nvim-lua/popup.nvim",
-    "nvim-telescope/telescope.nvim",
-    "nvim-telescope/telescope-ui-select.nvim",
     'kyazdani42/nvim-web-devicons',
     "nvim-treesitter/playground",
     "romgrk/nvim-treesitter-context",
