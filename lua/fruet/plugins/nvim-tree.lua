@@ -1,5 +1,6 @@
 return {
     'kyazdani42/nvim-tree.lua',
+    dependencies = 'kyazdani42/nvim-web-devicons',
     config = function ()
         local api = require('nvim-tree.api')
         local map = vim.keymap.set

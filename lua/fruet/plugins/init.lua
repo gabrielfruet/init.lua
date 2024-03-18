@@ -1,13 +1,11 @@
 return {
     "nvim-lua/plenary.nvim",
     "nvim-lua/popup.nvim",
-    'kyazdani42/nvim-web-devicons',
     "nvim-treesitter/playground",
     "romgrk/nvim-treesitter-context",
     "folke/tokyonight.nvim",
     "themercorp/themer.lua",
     'nvim-lualine/lualine.nvim',
-    {'akinsho/bufferline.nvim', dependencies = 'kyazdani42/nvim-web-devicons'},
     "sbdchd/neoformat",
     "TimUntersberger/neogit",
     "windwp/nvim-autopairs",
