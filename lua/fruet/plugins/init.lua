@@ -9,33 +9,9 @@ return {
     "sbdchd/neoformat",
     "TimUntersberger/neogit",
     "windwp/nvim-autopairs",
-    {"aserowy/tmux.nvim",
-        config = function()
-            require("tmux").setup({
-                -- overwrite default configuration
-                -- here, e.g. to enable default bindings
-                copy_sync = {
-                    -- enables copy sync and overwrites all register actions to
-                    -- sync registers *, +, unnamed, and 0 till 9 from tmux in advance
-                    enable = true,
-                },
-                navigation = {
-                    -- enables default keybindings (C-hjkl) for normal mode
-                    enable_default_keybindings = true,
-                },
-                resize = {
-                    -- enables default keybindings (A-hjkl) for normal mode
-                    enable_default_keybindings = true,
-                }
-            })
-        end
-    },
     "xiyaowong/nvim-transparent",
     'L3MON4D3/LuaSnip',
     'rafamadriz/friendly-snippets',
     'onsails/lspkind-nvim',
-    {"williamboman/mason.nvim"},
-    "williamboman/mason-lspconfig.nvim",
-    'neovim/nvim-lspconfig',
     'folke/neodev.nvim',
 }
