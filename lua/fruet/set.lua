@@ -27,6 +27,6 @@ vim.opt.laststatus = 2
 -- Don't pass messages to |ins-completion-menu|.
 vim.g.mapleader = " "
 
-vim.opt.guifont="JetBrainsMono Nerd Font"
+--vim.opt.guifont="JetBrainsMono Nerd Font"
 --vim.opt.guifont="FiraCode Nerd Font"
 --vim.opt.guifont="Iosevka Nerd Font"

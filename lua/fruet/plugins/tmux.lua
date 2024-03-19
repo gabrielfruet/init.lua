@@ -1,5 +1,6 @@
 return {
     "aserowy/tmux.nvim",
+    enabled=false,
     opts = {
         copy_sync = {
             -- enables copy sync. by default, all registers are synchronized.

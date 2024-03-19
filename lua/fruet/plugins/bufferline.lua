@@ -5,7 +5,8 @@ return {
     dependencies = 'nvim-tree/nvim-web-devicons',
     opts = {
         options = {
-            --separator_style = "slant",
+            --'slant' conflicts with transparency.
+            separator_style = "slant",
 
             offsets = {
                 {
@@ -24,6 +25,7 @@ return {
                 }
             }
         },
+        --[[
         highlights = {
             separator = {
                 fg = fg,
@@ -35,6 +37,7 @@ return {
                 fg = fg,
             },
         },
+        --]]
     }
 }
 
