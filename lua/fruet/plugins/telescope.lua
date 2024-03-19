@@ -6,8 +6,11 @@ return {
         local tlscp = require('telescope.builtin')
         local noremap = { noremap = true }
 
+        map('n', '<C-t>', tlscp.builtin, noremap)
         map('n', '<leader>fg', tlscp.grep_string, noremap)
         map('n', '<C-p>', tlscp.find_files, noremap)
+        map('n', '<leader>ts', tlscp.treesitter, noremap)
+        --map('n', '<leader>ts', tlscp.treesitter, noremap)
 
         require('telescope').setup {
             extensions = {

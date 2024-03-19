@@ -37,6 +37,10 @@ return {
             ---@param highlights Highlights
             ---@param colors ColorScheme
             on_highlights = function(hl, c)
+                hl.IncSearch = {
+                    bg=c.orange,
+                    fg=c.bg,
+                }
                 hl.FloatBorder = {
                     bg = c.bg,
                     fg = c.white,
