@@ -5,9 +5,9 @@ local function run()
     local hover = vim.lsp.buf.hover
 
     --save buffer
-    map('n', '<c-s>', '<cmd>w!<cr>', noremap)
-    map('n', '<c-q>', '<cmd>qa<cr>', noremap)
-    --map('n', '<c-Q>', '<cmd>qa!<cr>', noremap)
+    map('n', '<c-s>', '<cmd>w!<cr>', noremap) -- S ave
+    map('n', '<c-q>', '<cmd>qa<cr>', noremap) -- Q uit
+    map('n', '<c-e>', '<cmd>qa!<cr>', noremap) -- E xit
 
     --escape key
     map('i', 'jk', '<esc>', noremap)
@@ -39,10 +39,19 @@ local function run()
     map('n', '<leader>ya', [[ggVG"+y]], silent)
 
     --lsp
-    map('n', 'gd', function() vim.lsp.buf.definition() end, noremap)
-    map('n', '<leader>ca', function() vim.lsp.buf.code_action() end, noremap)
-    map('n', '<leader>vrr', function() vim.lsp.buf.references() end, noremap)
-    map('n', '<leader>vrn', function() vim.lsp.buf.rename() end, noremap)
+    vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+        vim.lsp.handlers.hover, {
+            -- Use a sharp border with `FloatBorder` highlights
+            border = "rounded"
+        }
+    )
+    map('n', 'K', vim.lsp.buf.hover, noremap)
+    map('n', 'gd', vim.lsp.buf.definition, noremap)
+    map('n', '<leader>ca', vim.lsp.buf.code_action, noremap)
+    map('n', '<leader>vrr', vim.lsp.buf.references, noremap)
+    map('n', '<leader>vrn',vim.lsp.buf.rename, noremap)
+    map('n', '<leader>rf', vim.lsp.buf.references, noremap)
+    map('n', '<leader>ws', vim.lsp.buf.workspace_symbol, noremap)
 
     --diagnostic
     map('n', '<leader>vd', function() vim.diagnostic.open_float() end, noremap)
