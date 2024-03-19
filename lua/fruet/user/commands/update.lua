@@ -27,5 +27,4 @@ end
 vim.api.nvim_create_user_command('UpdateAll', update_plugins, {})
 
 return {
-    update_plugins = update_plugins
 }

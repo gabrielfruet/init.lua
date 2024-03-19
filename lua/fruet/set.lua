@@ -1,3 +1,4 @@
+vim.g.mapleader = " "
 vim.opt.guicursor = ""
 
 vim.opt.nu = true
@@ -25,7 +26,6 @@ vim.opt.laststatus = 2
 --vim.cmd[[set-option -ga terminal-overrides ",xterm-256color:Tc"]]
 
 -- Don't pass messages to |ins-completion-menu|.
-vim.g.mapleader = " "
 
 --vim.opt.guifont="JetBrainsMono Nerd Font"
 --vim.opt.guifont="FiraCode Nerd Font"

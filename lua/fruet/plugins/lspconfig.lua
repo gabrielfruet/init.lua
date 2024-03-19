@@ -22,12 +22,5 @@ return {
                 },
             },
         }
-        c.rust_analyzer.setup{}
-        c.clangd.setup{}
-        c.tsserver.setup{}
-        c.eslint.setup{}
-        c.bashls.setup{}
-        c.gopls.setup{}
-        c.pyright.setup{}
     end
 }

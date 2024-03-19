@@ -1,6 +1,5 @@
 require('fruet.set')
+
 require('fruet.lazy')
-require('fruet.keymap')
-require('fruet.commands.update')
-require('fruet.commands.autorun')
-require('fruet.loader').load('/home/gabrielfruet/.config/nvim/lua/fruet/user/')
+
+require('fruet.loader').load('fruet.user')

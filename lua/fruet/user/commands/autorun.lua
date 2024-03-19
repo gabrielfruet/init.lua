@@ -78,6 +78,6 @@ end
 vim.api.nvim_create_user_command('AutoRun', function() run() end, {})
 
 return {
-    run = run
+
 }
 
