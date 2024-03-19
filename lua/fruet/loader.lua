@@ -58,10 +58,10 @@ local function require_loader(modules)
         if type(cfg) ~= 'table' then cfg = {} end
         local ncfg = vim.tbl_extend("keep", cfg, REQUIRE_LOADER_DEFAULT)
         if ncfg.enabled then
-            vim.print(module .. ' loaded and runned')
+            --vim.print(module .. ' loaded and runned')
             ncfg.run()
         else
-            vim.print(module .. ' loaded and not runned')
+            --vim.print(module .. ' loaded and not runned')
         end
     end
 end

@@ -3,5 +3,4 @@ return {
     --"nvim-lua/plenary.nvim",
     --"nvim-treesitter/playground",
     --"sbdchd/neoformat",
-    --"TimUntersberger/neogit",
 }
