@@ -1,6 +1,6 @@
 return {
     "folke/tokyonight.nvim",
-    priority=101,
+    priority=1000,
     config=function ()
         require('tokyonight').setup{
             -- your configuration comes here
@@ -14,11 +14,11 @@ return {
                 -- Style to be applied to different syntax groups
                 -- Value is any valid attr-list value for `:help nvim_set_hl`
                 comments = { italic = true },
-                keywords = { italic = true, bold = true},
+                keywords = { italic = true, bold = true, underline = true},
                 functions = {},
                 variables = {},
                 -- Background styles. Can be "dark", "transparent" or "normal"
-                sidebars = "normal", -- style for sidebars, see below
+                sidebars = "dark", -- style for sidebars, see below
                 floats = "normal", -- style for floating windows
             },
             sidebars = { "qf", "help" }, -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
@@ -37,8 +37,6 @@ return {
             ---@param highlights Highlights
             ---@param colors ColorScheme
             on_highlights = function(hl, c)
-                local black = '#000000'
-                local white = '#FFFFFF'
                 hl.FloatBorder = {
                     bg = c.bg,
                     fg = c.white,
@@ -79,6 +77,5 @@ return {
         }
 
         vim.cmd'colorscheme tokyonight'
-
     end,
 }
