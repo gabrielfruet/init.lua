@@ -1,4 +1,4 @@
-local bufops = require('bufops')
+local bufops = require(COMMA_PATH .. 'bufops')
 
 local lang_command = {
     rust = function() return 'cargo run' end;
@@ -90,7 +90,10 @@ local function buf_on_output(bufnr, winhan)
             data[1] = string.gsub(data[1], '\r', '')
             remove_filtered(data, function(v) return v == "" end)
             vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, data)
-            vim.api.nvim_win_set_cursor(winhan, {vim.api.nvim_buf_line_count(bufnr), 0})
+
+            if winhan ~= nil then
+                vim.api.nvim_win_set_cursor(winhan, {vim.api.nvim_buf_line_count(bufnr), 0})
+            end
         end
     end
 end
@@ -105,8 +108,9 @@ local function override_hl(ns_id, src, dst)
     vim.api.nvim_set_hl(ns_id, dst, srchl)
 end
 
+--- @param bufnr integer
+--- @param opts table
 local function buffer_to_floating_window(bufnr, opts)
-
     local win_width = vim.api.nvim_win_get_width(0)
     local win_height = vim.api.nvim_win_get_height(0)
 
@@ -157,16 +161,16 @@ local function buffer_to_floating_window(bufnr, opts)
 
     vim.bo.bufhidden = "delete"
     vim.bo.modifiable = true
-    --vim.bo.readonly = true
     --
-    return bufnr, winhan
+    return winhan
 end
 
+--- @param cmd string
+--- @param bufnr integer
 local function run_command(cmd, bufnr)
-    local fname = vim.fn.expand('%:t')
     local buf_name = cmd
 
-    local bufnr, winhan = buffer_to_floating_window({
+    local winhan = buffer_to_floating_window(bufnr, {
         buf_name = buf_name
     })
 
@@ -183,6 +187,7 @@ local function run_command(cmd, bufnr)
 
     local only_clear = {clear=true}
     local stop_job_on_buf_deletion = vim.api.nvim_create_augroup('StopJobAfterBufDelete', only_clear)
+
     vim.api.nvim_create_autocmd('BufDelete', {
         group=stop_job_on_buf_deletion,
         buffer=bufnr,
