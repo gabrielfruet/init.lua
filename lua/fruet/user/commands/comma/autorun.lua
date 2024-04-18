@@ -230,7 +230,7 @@ end
 return {
     run = function ()
         vim.api.nvim_create_user_command('AutoRun', function() autorun() end, {})
-        vim.api.nvim_create_user_command('AutoRunSetOutBuf', function() set_ouptut_buffer() end, {})
+        vim.api.nvim_create_user_command('AutoRunSetOutBuf', function() bufops.set_ouptut_buffer() end, {})
         vim.keymap.set("n", "<C-r>", autorun , {noremap=true})
     end
 }
