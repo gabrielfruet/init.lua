@@ -1,5 +1,6 @@
 return {
     "rshkarin/mason-nvim-lint",
+    enabled=false,
     event='BufWritePost',
     dependencies={
         "williamboman/mason.nvim",
@@ -10,7 +11,7 @@ return {
         -- This setting has no relation with the `automatic_installation` setting.
         -- Names of linters should be taken from the mason's registry.
         ---@type string[]
-        ensure_installed = {},
+        ensure_installed = {'shellcheck', 'pylint', 'luacheck'},
 
         -- Whether linters that are set up (via nvim-lint) should be automatically installed if they're not already installed.
         -- It tries to find the specified linters in the mason's registry to proceed with installation.

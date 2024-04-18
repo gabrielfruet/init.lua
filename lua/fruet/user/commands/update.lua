@@ -2,7 +2,7 @@ local function update_plugins()
     print("Updating plugins...")
 
     local update_commands = {
-        "PackerUpdate",
+        "Lazy update",
         "MasonUpdate",
         "TsUpdate"
         -- Add more update commands as needed

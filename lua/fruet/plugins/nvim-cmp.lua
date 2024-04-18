@@ -10,16 +10,19 @@ return{
         'rafamadriz/friendly-snippets',
         'onsails/lspkind-nvim',
         "hrsh7th/cmp-nvim-lsp",
-        'quangnguyen30192/cmp-nvim-ultisnips',
+        --'quangnguyen30192/cmp-nvim-ultisnips',
         'hrsh7th/cmp-nvim-lua',
         'octaltree/cmp-look',
         'hrsh7th/cmp-calc',
         'f3fora/cmp-spell',
-        'hrsh7th/cmp-emoji'
+        'hrsh7th/cmp-emoji',
+        'tamago324/cmp-zsh',
+        'hrsh7th/cmp-cmdline'
     },
     config = function ()
         local cmp = require'cmp'
         local lspkind = require('lspkind')
+        local luasnip = require('luasnip')
 
         cmp.setup({
             formatting = {
@@ -45,26 +48,38 @@ return{
                 end,
             },
             window = {
-                completion = cmp.config.window.bordered(),
-                documentation = cmp.config.window.bordered(),
+                completion = cmp.config.window.bordered{border="rounded"},
+                documentation = cmp.config.window.bordered{border="rounded"},
             },
             mapping = cmp.mapping.preset.insert({
-                ['<tab>'] =  cmp.mapping.select_next_item(),
-                ['<C-p>'] =  cmp.mapping.select_prev_item(),
-                ['<C-n>'] = cmp.mapping.select_next_item(),
+                ['<C-p>'] = function ()
+                    if cmp.visible() then
+                        cmp.select_prev_item()
+                    elseif luasnip.jumpable(-1) then
+                        luasnip.jump(-1)
+                    end
+                end,
+                ['<C-n>'] = function ()
+                    if cmp.visible() then
+                        cmp.select_next_item()
+                    elseif luasnip.jumpable(1) then
+                        luasnip.jump(1)
+                    end
+                end,
                 ['<C-b>'] = cmp.mapping.scroll_docs(-4),
                 ['<C-f>'] = cmp.mapping.scroll_docs(4),
                 ['<C-Space>'] = cmp.mapping.complete(),
-                ['<C-e>'] = cmp.mapping.abort(),
-                ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+                ['<C-x>'] = cmp.mapping.abort(),
+                ['<CR>'] = cmp.mapping.confirm({ select = true, behavior=cmp.ConfirmBehavior.Replace })-- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
             }),
             sources = cmp.config.sources({
                 { name = 'nvim_lsp' },
                 { name = 'luasnip' },
-                { name = 'path' },
+                { name = 'emoji'},
+                { name = 'calc'},
+                { name = 'look'},
                 { name = 'spell' },
-                { name = 'look'}
-            }, {
+                { name = 'path' },
                 { name = 'buffer' },
             })
         })
@@ -88,7 +103,7 @@ return{
 
         -- DO NOT UNCOMMENT THIS, CMDLINE WILL STOP WORKING
         -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-        --[[
+        ---[[
         cmp.setup.cmdline(':', {
             mapping = cmp.mapping.preset.cmdline(),
             sources = cmp.config.sources({
@@ -98,5 +113,14 @@ return{
             })
         })
         --]]
+        cmp.setup.filetype("tex", {
+            sources = {
+                { name = 'luasnip' },
+                { name = 'nvim_lsp' },
+                { name = 'vimtex' },
+                { name = 'buffer' },
+            },
+        })
+
     end
 }

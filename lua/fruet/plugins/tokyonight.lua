@@ -13,9 +13,9 @@ return {
             styles = {
                 -- Style to be applied to different syntax groups
                 -- Value is any valid attr-list value for `:help nvim_set_hl`
-                comments = { italic = true },
-                keywords = { italic = true, bold = true, underline = true},
-                functions = {},
+                comments = {},
+                keywords = { italic = true },
+                functions = { bold = true },
                 variables = {},
                 -- Background styles. Can be "dark", "transparent" or "normal"
                 sidebars = "dark", -- style for sidebars, see below
@@ -76,6 +76,18 @@ return {
                 hl.TelescopeResultsTitle = {
                     bg = c.bg_dark,
                     fg = c.bg_dark,
+                }
+                hl.AutorunNone = {
+                    bg = c.bg_dark,
+                    fg = c.fg_dark,
+                }
+                hl.AutorunRounded = {
+                    bg = c.bg,
+                    fg = c.fg,
+                }
+                hl.AutorunSolid = {
+                    bg = c.bg,
+                    fg = c.fg,
                 }
             end,
         }

@@ -1,17 +1,65 @@
-local filetype = require('plenary.filetype')
-local popup = require('plenary.popup')
-
 local lang_command = {
     rust = function() return 'cargo run' end;
     python = function(fname) return ('python ' .. fname) end;
 }
 
-local function get_lang(filepath)
-    local lang = filetype.detect_from_extension(filepath)
-    if lang == '' then
-        lang = 'Non existing extension.'
+local commands = {
+    rust={
+        filetype='rust',
+        cmd='cargo run'
+    };
+    python={
+        filetype='python',
+        callback=function(bufnr)
+            local fpath = vim.api.nvim_buf_get_name(bufnr)
+            return 'python ' .. fpath
+        end
+    };
+    make={
+        callback=function(bufnr)
+            local makepath = vim.fs.find('Makefile',{
+                upward=true,
+                stop=vim.loop.os_homedir(),
+                path=vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr))
+            })
+            local makecmd = {}
+            for i,mkpath in ipairs(makepath) do
+                makecmd[i] = 'make -f ' .. mkpath
+            end
+            return makecmd
+        end
+    },
+    bash={
+        filetype='sh',
+        callback=function (bufnr)
+            local fpath = vim.api.nvim_buf_get_name(bufnr)
+            return fpath
+        end
+    }
+}
+
+local function available_commands(bufnr)
+    local matched = {}
+    for k,v in pairs(commands) do
+        if v.filetype == nil or v.filetype == vim.filetype.match({buf=bufnr}) then
+            vim.print(matched)
+            if v.callback ~= nil then
+                local cmd = v.callback(bufnr)
+                if cmd ~= nil then
+                    table.insert(matched, cmd)
+                end
+            end
+
+            if v.cmd ~= nil and type(v.cmd) == 'string' then
+                table.insert(matched, v.cmd)
+            end
+
+        end
     end
-    return lang
+
+    vim.print(matched)
+
+    return vim.tbl_flatten(matched)
 end
 
 local function get_command(filepath, lang)
@@ -22,106 +70,171 @@ local function get_command(filepath, lang)
     return create_command(filepath)
 end
 
-local function buf_on_output(bufnr)
+local function remove_filtered(tbl, filter)
+    local i = 1
+    while i <= #tbl do
+        if filter(tbl[i]) then
+            table.remove(tbl, i)
+        else
+            i = i + 1
+        end
+
+    end
+end
+
+local function buf_on_output(bufnr, winhan)
     return  function (chan_id, data, name)
         if data then
+            data[1] = string.gsub(data[1], '\r', '')
+            remove_filtered(data, function(v) return v == "" end)
             vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, data)
+            vim.api.nvim_win_set_cursor(winhan, {vim.api.nvim_buf_line_count(bufnr), 0})
         end
     end
 end
 
+local function get_colors_from_highlight_group(group_name)
+    local hl_id = vim.api.nvim_get_hl_id_by_name(group_name)
+    return vim.api.nvim_get_hl(hl_id)
+end
+
+local function override_hl(ns_id, src, dst)
+    local srchl = vim.api.nvim_get_hl(0, {name=src})
+    vim.api.nvim_set_hl(ns_id, dst, srchl)
+end
+
+local function buffer_to_floating_window(bufnr, opts)
+
+    local win_width = vim.api.nvim_win_get_width(0)
+    local win_height = vim.api.nvim_win_get_height(0)
+
+    local scale = 0.5
+    if opts.scale ~= nil then scale = opts.scale end
+
+    local height = math.floor(win_height * scale)
+    local width = math.floor(win_width * scale)
+
+    local col = math.floor((win_width - width )/2)
+    local row = math.floor((win_height - height )/2)
+
+    local buf_name = 'Unnamed'
+    if opts.buf_name ~= nil then buf_name = opts.buf_name end
+
+    local winopts = {
+        title=buf_name,
+        relative='win',
+        width=width,
+        height=height,
+        col=col,
+        row=row,
+        anchor='NW',
+        style='minimal',
+        border='none'
+    }
+    local winhan = vim.api.nvim_open_win(bufnr, true, winopts)
+
+    local ns_name = 'Autorun'
+    local bgns = vim.api.nvim_create_namespace(ns_name)
+
+    local border_normal_float_hl = {
+        none='AutorunNone',
+        rounded='AutorunRounded',
+        solid='AutorunSolid'
+    }
+
+    local border_floatborder_hl = {
+        none='AutorunNoneFloatBorder',
+        rounded='AutorunRoundedFloatBorder',
+        solid='AutorunSolidFloatBorder'
+    }
+
+    override_hl(bgns, border_normal_float_hl[winopts.border], 'NormalFloat')
+    override_hl(bgns, border_floatborder_hl[winopts.border], 'FloatBorder')
+
+    vim.api.nvim_win_set_hl_ns(winhan, bgns)
+
+    vim.bo.bufhidden = "delete"
+    vim.bo.modifiable = true
+    --vim.bo.readonly = true
+    --
+    return bufnr, winhan
+end
+
+local function run_command(cmd, bufnr)
+    local fname = vim.fn.expand('%:t')
+    local buf_name = cmd
+
+    local bufnr, winhan = buffer_to_floating_window({
+        buf_name = buf_name
+    })
+
+    local job_id = vim.fn.jobstart(cmd, {
+        on_stdout = buf_on_output(bufnr, winhan),
+        on_stderr = buf_on_output(bufnr, winhan),
+        on_exit = function(id, code, event)
+            print(event)
+        end,
+        stdout_buffered = false,
+        pty=true,
+        stdin='pipe'
+    })
+
+    local only_clear = {clear=true}
+    local stop_job_on_buf_deletion = vim.api.nvim_create_augroup('StopJobAfterBufDelete', only_clear)
+    vim.api.nvim_create_autocmd('BufDelete', {
+        group=stop_job_on_buf_deletion,
+        buffer=bufnr,
+        callback=function ()
+            vim.fn.jobstop(job_id)
+        end
+    })
+end
+
+local function show_error(msg)
+    vim.api.nvim_echo({{msg, 'ErrorMsg'}}, false, {})
+end
+
 local function autorun()
     local filepath = vim.fn.expand('%:p')
-    local language = get_lang(filepath)
-    local command = get_command(filepath, language)
-    local output
-    if command ~= nil then
-        output = vim.fn.systemlist(command)
-    else
-        output = "No binding for this language: " .. language
-    end
+    local ftype = vim.filetype.match({buf=0})
+    local command = get_command(filepath, ftype)
+    local available_cmds = available_commands(0)
+
+    local bufnr = vim.api.nvim_create_buf(false, true)
+
+    vim.keymap.set('n', 'q', function()
+        vim.api.nvim_buf_delete(bufnr, {})
+    end, { noremap = true, silent = true, buffer=bufnr})
+
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-r>', '', { noremap = true, silent = true })
 
 
-    if command == nil then
-        local vim_options = {
-            relative = "cursor",
-            border = {1,2,1,2},
-            padding = {2, 2, 2, 2},
-            highlight = 'ErrorMsg',
-            cursorline = false,
-            enter = true,
-            focusable = true,
-        }
-
-        -- Show the popup at the cursor position
-        local popup_id = popup.create(output, vim_options)
-        local popup_bufnr = vim.fn.bufnr(vim.fn.winbufnr(popup_id))
-
-        -- Define a key mapping for "q" in the buffer
-        local opts = { noremap = true, silent = true, nowait = true }
-        vim.api.nvim_buf_set_keymap(popup_bufnr, 'n', 'q', '<cmd>close<CR>', opts)
-        vim.api.nvim_buf_set_keymap(popup_bufnr, 'n', '<CR>', '<cmd>close<CR>', opts)
+    if #available_cmds < 1 then
+        show_error('No command available')
         return
+    elseif #available_cmds == 1 then
+        run_command(available_cmds[1], bufnr)
+    else
+        vim.ui.select(available_cmds, {
+            prompt='What command you want to run?'
+        }, function(cmd)
+                if cmd ~= nil and type(cmd) == 'string' then
+                    run_command(cmd, bufnr)
+                else
+                    show_error('Didn`t choose any')
+                end
+            end)
     end
 
-    if type(output) == 'table' then
-        local fname = vim.fn.expand('%:t')
-        local buf_name = get_lang(filepath) .. ' ' .. fname
-        local bufnr = vim.api.nvim_create_buf(false, true)
-        local on_output = buf_on_output(bufnr)
 
-        local job_id = vim.fn.jobstart(command, {
-            on_stdout = on_output,
-            on_stderr = on_output,
-            on_exit = function(id, code, event)
-                print("Job completed with exit code:", code)
-            end,
-            stdout_buffered = true,
-            stderr_buffered = true,
-        })
-        local win_width = vim.api.nvim_win_get_width(0)
-        local win_height = vim.api.nvim_win_get_height(0)
-        local height = math.floor(win_height * 0.5)
-        local width = math.floor(win_width * 0.5)
 
-        local col = math.floor((win_width - width )/2)
-        local row = math.floor((win_height - height )/2)
-        print(col,row)
-
-        local winopts = {
-            title=buf_name,
-            relative='win',
-            width=width,
-            height=height,
-            col=col,
-            row=row,
-            anchor='NW',
-            style='minimal',
-            border='rounded'
-        }
-        vim.api.nvim_open_win(bufnr, true, winopts)
-        --vim.api.nvim_buf_set_lines(bufnr,0,-1,false, output)
-
-        vim.bo.bufhidden = "delete"
-        vim.bo.readonly = true
-        vim.api.nvim_buf_set_name(bufnr, buf_name)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'q', ':bd!<CR>', { noremap = true, silent = true })
-        --vim.fn.jobwait({job_id})
-        --vim.cmd([[highlight RunMessage guifg=#00afff]])
-
-        -- Display the message in the status line
-        --vim.api.nvim_buf_set_option(bufnr, 'buftype', 'nofile')
-        --vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, { "Press 'q' to close this buffer" })
-        --local last_line = vim.api.nvim_buf_line_count(0) - 1
-        --vim.api.nvim_buf_add_highlight(bufnr, -1, 'RunMessage', last_line, 0, -1)
-    end
 end
 
 
 return {
     run = function ()
         vim.api.nvim_create_user_command('AutoRun', function() autorun() end, {})
-        vim.keymap.set("n", "<c-r>", autorun , {noremap=true})
+        vim.keymap.set("n", "<C-r>", autorun , {noremap=true})
     end
 }
 

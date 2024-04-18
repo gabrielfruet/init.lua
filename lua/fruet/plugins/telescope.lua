@@ -1,8 +1,8 @@
 return {
     "nvim-telescope/telescope.nvim",
     config = function ()
-        print('1')
         local map = vim.keymap.set
+
         local tlscp = require('telescope.builtin')
         local noremap = { noremap = true }
 
@@ -10,6 +10,8 @@ return {
         map('n', '<leader>fg', tlscp.grep_string, noremap)
         map('n', '<C-p>', tlscp.find_files, noremap)
         map('n', '<leader>ts', tlscp.treesitter, noremap)
+        map('n', '<leader>ws', tlscp.lsp_dynamic_workspace_symbols, noremap)
+        map('n', '<leader>vvd', tlscp.diagnostics, noremap)
         --map('n', '<leader>ts', tlscp.treesitter, noremap)
 
         require('telescope').setup {
