@@ -1,3 +1,5 @@
+local bufops = require('bufops')
+
 local lang_command = {
     rust = function() return 'cargo run' end;
     python = function(fname) return ('python ' .. fname) end;
@@ -195,12 +197,9 @@ local function show_error(msg)
 end
 
 local function autorun()
-    local filepath = vim.fn.expand('%:p')
-    local ftype = vim.filetype.match({buf=0})
-    local command = get_command(filepath, ftype)
     local available_cmds = available_commands(0)
 
-    local bufnr = vim.api.nvim_create_buf(false, true)
+    local bufnr = bufops.get_output_buffer()
 
     vim.keymap.set('n', 'q', function()
         vim.api.nvim_buf_delete(bufnr, {})
@@ -225,15 +224,13 @@ local function autorun()
                 end
             end)
     end
-
-
-
 end
 
 
 return {
     run = function ()
         vim.api.nvim_create_user_command('AutoRun', function() autorun() end, {})
+        vim.api.nvim_create_user_command('AutoRunSetOutBuf', function() set_ouptut_buffer() end, {})
         vim.keymap.set("n", "<C-r>", autorun , {noremap=true})
     end
 }
