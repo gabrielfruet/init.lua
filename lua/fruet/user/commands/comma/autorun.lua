@@ -87,7 +87,13 @@ end
 local function buf_on_output(bufnr, winhan)
     return  function (chan_id, data, name)
         if data then
-            data[1] = string.gsub(data[1], '\r', '')
+            -- This is done because `\r` creates a `^M` character that is not wanted
+            -- The solution sees to be substituting the character for ` `
+            -- As substituting it with a empty string just skips the line
+            -- We dont explicitly need to use `\n`.
+            for i = 1, #data do
+                data[i] = string.gsub(data[i], '\r', ' ')
+            end
             remove_filtered(data, function(v) return v == "" end)
             vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, data)
 
