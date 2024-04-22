@@ -8,6 +8,7 @@ return {
         local nvim_lint = require('lint')
         nvim_lint.linters_by_ft = {
             python={'pylint'},
+            lua={'luacheck'},
             bash={'shellcheck'},
             shell={'shellcheck'},
         }
@@ -21,6 +22,14 @@ return {
         vim.keymap.set('n', '<leader>li', function ()
             nvim_lint.try_lint()
         end, {noremap=true})
+
+        -- Luacheck with global vim
+        nvim_lint.linters.luacheck.args = {
+            '--formatter', 'plain',    -- Use plain text for output
+            '--codes',                 -- Show warning codes
+            '--globals', 'vim',        -- Declare 'vim' as a global
+            '--',                      -- End of options for luacheck
+        }
 
         --for pylint to work with venv
         --require('lint').linters.pylint.cmd = 'python'
