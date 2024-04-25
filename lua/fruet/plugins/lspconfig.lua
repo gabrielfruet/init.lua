@@ -1,29 +1,37 @@
-local function neodev_before()
-    require("neodev").setup({
-        override = function(root_dir, library)
-            library.enabled = true
-            library.plugins = true
-        end,
-    })
-end
-
 return {
     'neovim/nvim-lspconfig',
     config = function ()
-        neodev_before()
+        require("neodev").setup({})
         local c = require'lspconfig'
         c.lua_ls.setup({
             settings = {
                 Lua = {
+                    runtime = {
+                        version = 'LuaJIT',
+                        path = {
+                            '?/init.lua',
+                            '?.lua'
+                        }
+                    },
+                    workspace = {
+                        library = {
+                            '/usr/share/nvim/runtime/lua',
+                            '/usr/share/nvim/runtime/lua/lsp',
+                            '/usr/share/awesome/lib'
+                        }
+                    },
                     completion = {
-                        callSnippet = "Replace"
+                        enable = true,
                     },
                     diagnostics = {
-                        globals = {'vim'}
+                        enable = true,
+                        globals = { 'vim', 'awesome', 'client', 'root' }
+                    },
+                    telemetry = {
+                        enable = false
                     }
                 }
-            }
-        })
+            }        })
         --c.rust_analyzer.setup{}
         c.pyright.setup{
             exclude= { ".venv" },
