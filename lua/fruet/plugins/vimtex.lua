@@ -9,7 +9,7 @@ return {
 
         local only_clear = {clear=true}
         local vimtex_keyamps_on_tex = vim.api.nvim_create_augroup('vimtex_keymaps_on_tex', only_clear)
-        vim.api.nvim_create_autocmd('BufNew', {
+        vim.api.nvim_create_autocmd({'BufNew', 'BufEnter'}, {
             pattern="*.tex",
             group=vimtex_keyamps_on_tex,
             callback=function ()
