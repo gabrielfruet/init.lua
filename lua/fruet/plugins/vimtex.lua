@@ -5,8 +5,9 @@ return {
         -- Use init for configuration, don't use the more common "config".
         vim.g.vimtex_view_method = 'zathura'
         vim.g.vimtex_compiler_method = 'latexmk'
-        vim.g.vimtex_quickfix_mode = 0
+        --vim.g.vimtex_quickfix_mode = 0
 
+        --[[ Not needed
         local only_clear = {clear=true}
         local vimtex_keyamps_on_tex = vim.api.nvim_create_augroup('vimtex_keymaps_on_tex', only_clear)
         vim.api.nvim_create_autocmd({'BufNew', 'BufEnter'}, {
@@ -17,6 +18,7 @@ return {
                 vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>sc', '<CMD>VimtexCompile<CR>', {noremap=true})
             end
         })
+        --]]
 
     end
 }
