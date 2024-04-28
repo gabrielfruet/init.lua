@@ -19,7 +19,7 @@ vim.opt.cmdheight = 1
 -- Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 -- delays and poor user experience.
 vim.opt.updatetime = 50
-vim.opt.termguicolors=true
+--vim.opt.termguicolors=true
 vim.opt.winblend = 0
 vim.opt.laststatus = 2
 --vim.cmd[[set -g default-terminal "xterm-256color"]]
