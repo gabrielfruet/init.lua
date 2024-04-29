@@ -141,7 +141,7 @@ local function buffer_to_floating_window(bufnr, opts)
         row=row,
         anchor='NW',
         style='minimal',
-        border='none'
+        border='rounded'
     }
     local winhan = vim.api.nvim_open_win(bufnr, true, winopts)
 

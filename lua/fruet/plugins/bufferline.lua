@@ -3,11 +3,11 @@ local fg = '#202020'
 return {
     'akinsho/bufferline.nvim',
     dependencies = 'nvim-tree/nvim-web-devicons',
+    enabled=true,
     opts = {
         options = {
             --'slant' conflicts with transparency.
-            separator_style = "slant",
-
+            separator_style = "thin",
             offsets = {
                 {
                     filetype = "NvimTree",

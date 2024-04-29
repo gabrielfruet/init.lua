@@ -2,11 +2,10 @@
 return {
     'nvim-lualine/lualine.nvim',
     config = function ()
-        local custom_tokyonight = require'lualine.themes.tokyonight'
-        custom_tokyonight.normal.a.bg = 'ff7c7c'
+        local theme = require'lualine.themes.oxocarbon'
         require'lualine'.setup{
             options = {
-                theme = custom_tokyonight,
+                theme = theme,
                 component_separators = '|',
                 section_separators = { left = '', right = '' },
                 disabled_filetypes = { 'packer', 'NvimTree', 'neo-tree'}
