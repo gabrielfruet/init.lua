@@ -2,7 +2,7 @@
 return {
     'nvim-lualine/lualine.nvim',
     config = function ()
-        local theme = require'lualine.themes.oxocarbon'
+        local theme = require'lualine.themes.sonokai'
         require'lualine'.setup{
             options = {
                 theme = theme,
