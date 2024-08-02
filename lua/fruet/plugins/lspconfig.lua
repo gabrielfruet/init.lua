@@ -42,5 +42,6 @@ return {
         c.cmake.setup{}
         c.bashls.setup{}
         c.texlab.setup{}
+        c.gopls.setup{}
     end
 }
