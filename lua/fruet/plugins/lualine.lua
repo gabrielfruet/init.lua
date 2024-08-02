@@ -3,6 +3,9 @@ return {
     'nvim-lualine/lualine.nvim',
     config = function ()
         local theme = require'lualine.themes.sonokai'
+        theme.inactive.a = nil
+        theme.inactive.b = nil
+        theme.inactive.c = nil
         require'lualine'.setup{
             options = {
                 theme = theme,

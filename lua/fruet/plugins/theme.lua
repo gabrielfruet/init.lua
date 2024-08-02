@@ -29,23 +29,22 @@ local function configure_highlights()
         prompt = get_highlight_color("Visual").bg,
         bg = vim.g.background,
         fg = vim.g.foreground,
-        bg_dark = get_highlight_color("BufferInactive").bg,
-        fg_dark = get_highlight_color("BufferInactive").fg,
-        bg_light = get_highlight_color("NormalFloat").bg,
-        fg_light = get_highlight_color("NormalFloat").fg,
+        bg_dark = vim.g.color1,
+        fg_dark = vim.g.color1,
+        bg_light = vim.g.color8,
+        fg_light = vim.g.color8,
         selected = get_highlight_color("BlueItalic").fg,
         white = '#ffffff',
     }
 
     -- Apply highlight configurations
-    set_highlight('FloatBorder', {bg = c.bg, fg=c.fg})
-    set_highlight('NormalFloat', {bg = c.bg, fg=c.fg})
-
+    set_highlight('FloatBorder', {bg = "none", fg=c.fg})
+    set_highlight('NormalFloat', {bg = "none", fg=c.fg})
     set_highlight('TreesitterContext', {bg = c.bg_light, fg=c.fg_light})
 
     set_highlight('CmpItemMenu', {bg = c.bg, fg = c.fg})
+    set_highlight('BufferLineFill', {bg = c.bg, fg = c.fg})
     set_highlight('Pmenu', {bg = c.bg, fg = c.fg})
-    set_highlight('TelescopeNormal', {bg = c.bg, fg = c.fg})
 
     local da = get_highlight_color('DiffAdd')
     set_highlight('TelescopeSelection', {bg = da.bg, fg = c.selected})
@@ -53,10 +52,13 @@ local function configure_highlights()
 
 
     set_highlight('InfoText', {bg = c.bg, fg=c.fg})
-    set_highlight('TelescopePromptNormal', {bg = c.bg_light, fg = c.fg_light})
-    set_highlight('TelescopePromptCounter', {bg = c.bg_light, fg = c.fg_light})
-    set_highlight('TelescopePromptBorder', {bg = c.bg_light, fg = c.fg_light})
-    set_highlight('TelescopePromptTitle', {bg = c.bg_light, fg = c.fg_light})
+    set_highlight('TelescopeNormal', {bg = c.bg, fg = c.fg})
+    set_highlight('TelescopePromptBorder', {bg = c.bg, fg = c.bg})
+    set_highlight('TelescopeResultsBorder', {bg = c.bg, fg = c.bg})
+    set_highlight('TelescopePreviewBorder', {bg = c.bg, fg = c.bg})
+    --set_highlight('TelescopePromptNormal', {bg = c.bg_light, fg = c.fg_light})
+    --set_highlight('TelescopePromptCounter', {bg = c.bg_light, fg = c.fg_light})
+    --set_highlight('TelescopePromptTitle', {bg = c.bg_light, fg = c.fg_light})
 
     --set_highlight('TelescopePreviewTitle', {bg = c.bg_dark, fg = c.bg_dark})
     --set_highlight('TelescopeResultsTitle', {bg = c.bg_dark, fg = c.bg_dark})
@@ -215,8 +217,9 @@ local sonokai = {
     'sainnhe/sonokai',
     priority=1000,
     config = function ()
-        vim.cmd[[colorscheme sonokai]]
         vim.g.sonokai_style = 'default'
+        vim.g.sonokai_transparent_background=2
+        vim.cmd[[colorscheme sonokai]]
     end
 }
 
@@ -228,6 +231,63 @@ local monokai = {
         vim.cmd[[colorscheme monokai]]
     end
 }
+
+local cyberdream = {
+    "scottmckendry/cyberdream.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function ()
+        require("cyberdream").setup({
+            -- Enable transparent background
+            transparent = false,
+
+            -- Enable italics comments
+            italic_comments = false,
+
+            -- Replace all fillchars with ' ' for the ultimate clean look
+            hide_fillchars = false,
+
+            -- Modern borderless telescope theme
+            borderless_telescope = true,
+
+            -- Set terminal colors used in `:terminal`
+            terminal_colors = true,
+
+            theme = {
+                variant = "default", -- use "light" for the light variant
+                highlights = {
+                    -- Highlight groups to override, adding new groups is also possible
+                    -- See `:h highlight-groups` for a list of highlight groups or run `:hi` to see all groups and their current values
+
+                    -- Example:
+                    Comment = { fg = "#696969", bg = "NONE", italic = true },
+
+                    -- Complete list can be found in `lua/cyberdream/theme.lua`
+                },
+
+                -- Override a color entirely
+                colors = {
+                    -- For a list of colors see `lua/cyberdream/colours.lua`
+                    -- Example:
+                    bg = "#000000",
+                    green = "#00ff00",
+                    magenta = "#ff00ff",
+                },
+            },
+        })
+        vim.cmd("colorscheme cyberdream")
+    end
+}
+
+local tender =  {
+    'jacoborus/tender.vim',
+    lazy=false,
+    priority=1000,
+    config = function ()
+        vim.cmd("colorscheme tender")
+    end
+}
+
 -- Function to get the highlight group of the text under the cursor
 local function print_highlight_groups_under_cursor()
     local line = vim.fn.line('.')      -- Current line number
