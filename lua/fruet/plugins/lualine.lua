@@ -2,7 +2,7 @@
 return {
     'nvim-lualine/lualine.nvim',
     config = function ()
-        local theme = require'lualine.themes.sonokai'
+        local theme = require'lualine.themes.gruvbox_dark'
         theme.inactive.a = nil
         theme.inactive.b = nil
         theme.inactive.c = nil

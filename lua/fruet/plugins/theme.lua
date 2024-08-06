@@ -288,6 +288,15 @@ local tender =  {
     end
 }
 
+local gruvbox = {
+    "ellisonleao/gruvbox.nvim",
+    lazy=false,
+    priority = 1000 ,
+    config = function ()
+       vim.cmd("colorscheme gruvbox")
+    end,
+}
+
 -- Function to get the highlight group of the text under the cursor
 local function print_highlight_groups_under_cursor()
     local line = vim.fn.line('.')      -- Current line number
@@ -313,4 +322,4 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     end
 })
 
-return sonokai
+return gruvbox
