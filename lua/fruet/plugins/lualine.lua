@@ -1,6 +1,7 @@
 
 return {
     'nvim-lualine/lualine.nvim',
+    enabled=false,
     config = function ()
         local theme = require'lualine.themes.gruvbox_dark'
         theme.inactive.a = nil

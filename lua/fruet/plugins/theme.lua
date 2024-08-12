@@ -36,6 +36,8 @@ local function configure_highlights()
         selected = get_highlight_color("BlueItalic").fg,
         white = '#ffffff',
     }
+    set_highlight('StatusLine', {bg = "none", fg=c.fg})
+    set_highlight('StatusLineNC', {bg = "none", fg=c.fg_light})
 
     -- Apply highlight configurations
     set_highlight('FloatBorder', {bg = "none", fg=c.fg})
