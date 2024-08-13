@@ -1,7 +1,6 @@
 vim.cmd('source ~/.cache/wal/colors-wal.vim')
 
 vim.g.mapleader = " "
-vim.g.have_nerd_font = true
 vim.opt.guicursor = ""
 
 vim.opt.nu = true

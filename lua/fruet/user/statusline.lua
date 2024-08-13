@@ -112,7 +112,6 @@ end
 
 local function filename_widget(current_window)
     local filename = vim.fn.expand('%:t')
-    local cbufname = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ':t')
 
     local symbolhl, normalhl
     if current_window == 1 then
