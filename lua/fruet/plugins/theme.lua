@@ -50,9 +50,10 @@ local function configure_highlights()
     tbl.bg = "none"
     tbl.fg = c.bg_light
     set_highlight('TabLineSel', tblsel)
-    set_highlight('Tabline', tbl)
+    set_highlight('TabLine', tbl)
     set_highlight('TabLineFill', {bg = "none"})
     set_highlight('TabLineSelSymbol', {bg="none", fg=tblsel.bg})
+    set_highlight('TabLineSymbol', {bg="none", fg="none"})
 
     set_highlight('CmpItemMenu', {bg = c.bg, fg = c.fg})
     set_highlight('BufferLineFill', {bg = c.bg, fg = c.fg})

@@ -147,30 +147,6 @@ function _G._get_icon()
     return get_icon()
 end
 
-local function branch_name()
-	local branch = vim.fn.system("git branch --show-current 2> /dev/null | tr -d '\n'")
-    local github_icon = ''
-    local branch_icon = ''
-
-	if branch ~= "" then
-		return table.concat{
-            '%#StatusLineBranch#',
-            ' ',
-            branch_icon,
-            ' ',
-            branch,
-            '%#StatusLineBranchSymbol#',
-            '',
-            '%*'
-        }
-	else
-		return ""
-	end
-end
-
-function _G._branch_name()
-    return branch_name()
-end
 
 local function get_diagnostics()
     local diaglist = vim.diagnostic.get(0,{
@@ -234,6 +210,32 @@ function _G._get_diagnostics()
    return get_diagnostics()
 end
 
+local function branch_name()
+	local branch = vim.fn.system("git branch --show-current 2> /dev/null | tr -d '\n'")
+    local github_icon = ''
+    local branch_icon = ''
+
+	if branch ~= "" then
+		return table.concat{
+            '%#StatusLineBranch#',
+            ' ',
+            branch_icon,
+            ' ',
+            branch,
+            '%#StatusLineBranchSymbol#',
+            '',
+            --'',
+            '%*'
+        }
+	else
+		return ""
+	end
+end
+
+function _G._branch_name()
+    return branch_name()
+end
+
 local function get_mode()
     local hl_code = mode_map[vim.api.nvim_get_mode().mode]:sub(1,1)
     get_diagnostics()
@@ -253,15 +255,15 @@ end
 local function mystatusline()
     local is_cwin = ((vim.g.statusline_winid == vim.fn.win_getid(vim.fn.winnr())) and 1 or 0)
     return table.concat({
-        '%{%v:lua._get_mode()%}',
-        '%{%v:lua._branch_name()%}',
+        --'%{%v:lua._get_mode()%}',
+        --'%{%v:lua._branch_name()%}',
+        '%{%v:lua._get_diagnostics()%}',
         '%r',  -- Read-only flag
         '%h',
         '%m',
         '%=',  -- Separator
         '%{%v:lua._filename_widget(' .. is_cwin .. ')%}',
         '%=',  -- Separator
-        '%{%v:lua._get_diagnostics()%}',
         ' ',
         '%P'
     })

@@ -21,14 +21,17 @@ function MyTabLine()
         local bufnr = buf.bufnr
         local bufnrhl
         local tablinehl
+        local symbhl
 
         -- Select the highlighting
         if bufnr == vim.fn.bufnr('%') then
             tablinehl = hl_wrapper('TabLineSel')
             bufnrhl = hl_wrapper('TabLineBufNumSel')
+            symbhl = hl_wrapper('TabLineSelSymbol')
         else
             tablinehl = hl_wrapper('TabLine')
             bufnrhl = hl_wrapper('TabLineBufNum')
+            symbhl = hl_wrapper('TabLineSymbol')
         end
 
         local bufname = vim.fn.bufname(bufnr)
@@ -41,7 +44,9 @@ function MyTabLine()
         end
         -- idiomatic way of getting the icon as the tbl can be nil
         local icon = icons_by_extension[extension] and icons_by_extension[extension].icon or ''
-        s = string.format("%s%s %s %s %%*", s, bufnrhl(' ' .. virtbuf), tablinehl(icon), tablinehl(dispname))
+        local symbr = ''
+        local symbl = ''
+        s = string.format("%s%s %s %s %%*", s,  bufnrhl(' ' .. virtbuf), tablinehl(icon), tablinehl(dispname))
     end
 
     -- After the last buffer, fill with TabLineFill
@@ -139,7 +144,12 @@ end
 function M.run()
     set_hls()
     vim.opt.showtabline = 2
-    vim.opt.tabline = '%{%v:lua._mytabline()%}'
+    vim.opt.tabline = table.concat{
+        '%{%v:lua._get_mode()%}',
+        '%{%v:lua._branch_name()%}',
+        '      ',
+        '%{%v:lua._mytabline()%}',
+    }
     setup_virtbuf()
 end
 
