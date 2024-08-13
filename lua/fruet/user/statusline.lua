@@ -172,8 +172,59 @@ function _G._branch_name()
     return branch_name()
 end
 
+local function get_diagnostics()
+    local diagnostic_count = vim.diagnostic.count(0,{})
+    local severity_mapping = {
+        [vim.diagnostic.severity.ERROR] = {
+            text='[ERR]',
+            icon='X',
+            hl='DiagnosticError',
+            enabled=true,
+        },
+        [vim.diagnostic.severity.WARN] = {
+            text='[WARN]',
+            icon='⚠',
+            hl='DiagnosticWarn',
+            enabled=true,
+        },
+        [vim.diagnostic.severity.INFO] = {
+            text='[INFO]',
+            hl='DiagnosticInfo',
+            enabled=true,
+        },
+        [vim.diagnostic.severity.HINT] = {
+            text='[HINT]',
+            hl='DiagnosticHint',
+            enabled=false,
+        },
+    }
+
+    for severity, count in pairs(diagnostic_count) do
+        severity_mapping[severity].count = count
+    end
+
+    local output = {}
+
+    for _, render_data in ipairs(severity_mapping) do
+        render_data.count = render_data.count or 0
+        if render_data.count > 0 and render_data.enabled then
+            table.insert(output, '%#' .. render_data.hl .. '#')
+            table.insert(output, render_data.count or 0)
+            table.insert(output, render_data.text)
+            table.insert(output, '%*')
+        end
+    end
+
+    return table.concat(output)
+end
+
+function _G._get_diagnostics()
+   return get_diagnostics()
+end
+
 local function get_mode()
     local hl_code = mode_map[vim.api.nvim_get_mode().mode]:sub(1,1)
+    get_diagnostics()
     return table.concat{
         '%#StatusLineMode' .. hl_code:upper() .. '#',
         ' ',
@@ -198,7 +249,8 @@ local function setup_statusline()
         '%=',  -- Separator
         '%{%v:lua._filename_widget()%}',
         '%=',  -- Separator
-        '%-14.(%l,%c%V%)',
+        '%{%v:lua._get_diagnostics()%}',
+        --'%-14.(%l,%c%V%)',
         ' ',
         '%P'
     })
