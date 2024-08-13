@@ -1,5 +1,6 @@
 local M = {}
 
+
 local mode_map = {
   ['n']      = 'NORMAL',
   ['no']     = 'O-PENDING',
@@ -98,8 +99,6 @@ local function set_hls()
     })
 
 end
-
-
 
 local function get_icon()
     local extension = vim.fn.expand("%:e")

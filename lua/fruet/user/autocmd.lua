@@ -7,8 +7,9 @@ local function run()
             vim.highlight.on_yank{higroup = 'IncSearch', timeout='1000'}
         end
     })
-    -- Function to switch to a buffer by number
-    local function switch_to_buffer(bufnr)
+    local function switch_to_buffer(virtbuf)
+        -- Check if the buffer exists
+        local bufnr = _G.virtbuf_to_buf_map[virtbuf]
         if vim.fn.bufexists(bufnr) == 1 then
             vim.api.nvim_set_current_buf(bufnr)
         else
@@ -16,25 +17,11 @@ local function run()
         end
     end
 
-    -- Function to create a keybinding for a buffer
-    local function create_buffer_keybind(bufnr)
-        local key = tostring(bufnr)
-        vim.keymap.set('n', '<leader>' .. key, function()
-            switch_to_buffer(bufnr)
-        end, { noremap = true, silent = true, desc = "Switch to buffer " .. key })
-    end
-
-    -- Set up autocmd to create keybindings for new buffers
-    vim.api.nvim_create_autocmd("BufAdd", {
-        callback = function(ev)
-            local bufnr = ev.buf
-            create_buffer_keybind(bufnr)
-        end
-    })
-
-    -- Create keybindings for existing buffers
-    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-        create_buffer_keybind(bufnr)
+    -- Set up keymaps for buffer switching
+    for i = 0, 9 do
+        vim.keymap.set('n', string.format('<leader>%d', i), function()
+            switch_to_buffer(i)
+        end, { noremap = true, silent = true, desc = string.format("Switch to buffer %d", i) })
     end
 end
 

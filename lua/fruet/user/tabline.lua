@@ -1,5 +1,10 @@
 local M = {}
 
+local buf_to_virtbuf_map = {}
+local virtbuf_to_buf_map = {}
+
+_G.virtbuf_to_buf_map = virtbuf_to_buf_map
+
 local icons_by_extension = require'nvim-web-devicons'.get_icons_by_extension()
 
 local function hl_wrapper(hl)
@@ -13,20 +18,21 @@ function MyTabLine()
     local buffers = vim.fn.getbufinfo({buflisted = 1}) -- Get all listed buffers
 
     for _, buf in ipairs(buffers) do
-        local bufnum = buf.bufnr
-        local bufnumhl
+        local bufnr = buf.bufnr
+        local bufnrhl
         local tablinehl
 
         -- Select the highlighting
-        if bufnum == vim.fn.bufnr('%') then
+        if bufnr == vim.fn.bufnr('%') then
             tablinehl = hl_wrapper('TabLineSel')
-            bufnumhl = hl_wrapper('TabLineBufNumSel')
+            bufnrhl = hl_wrapper('TabLineBufNumSel')
         else
             tablinehl = hl_wrapper('TabLine')
-            bufnumhl = hl_wrapper('TabLineBufNum')
+            bufnrhl = hl_wrapper('TabLineBufNum')
         end
 
-        local bufname = vim.fn.bufname(bufnum)
+        local bufname = vim.fn.bufname(bufnr)
+        local virtbuf = buf_to_virtbuf_map[bufnr] or '?'
         local dispname = vim.fn.fnamemodify(bufname, ':t')
         local extension = vim.fn.fnamemodify(bufname, ':e')
 
@@ -35,7 +41,7 @@ function MyTabLine()
         end
         -- idiomatic way of getting the icon as the tbl can be nil
         local icon = icons_by_extension[extension] and icons_by_extension[extension].icon or ''
-        s = string.format("%s%s %s %s %%*", s, bufnumhl(' ' .. bufnum), tablinehl(icon), tablinehl(dispname))
+        s = string.format("%s%s %s %s %%*", s, bufnrhl(' ' .. virtbuf), tablinehl(icon), tablinehl(dispname))
     end
 
     -- After the last buffer, fill with TabLineFill
@@ -62,10 +68,79 @@ local function set_hls()
 
 end
 
+local function table_size(table)
+    local n = 0
+    for k, v in pairs(table) do
+        n = n + 1
+    end
+    return n
+end
+
+
+local function setup_virtbuf()
+    local update_virtbuf = vim.api.nvim_create_augroup('highlighted_yank_group', {clear=true})
+    local virtbuf_availables = {}
+    local function virtbuf_append(bufnr)
+        local idx = table_size(buf_to_virtbuf_map) + table_size(virtbuf_availables) + 1
+        local i_idx = -1
+
+        for i,avail_idx in ipairs(virtbuf_availables) do
+            if avail_idx < idx then
+                idx = avail_idx
+                i_idx = i
+            end
+        end
+
+        if i_idx ~= -1 then
+            table.remove(virtbuf_availables, i_idx)
+        end
+
+        buf_to_virtbuf_map[bufnr] = idx
+        virtbuf_to_buf_map[idx] = bufnr
+
+    end
+
+    local function turn_virtbuf_to_available(bufnr)
+        local virtbufnr = buf_to_virtbuf_map[bufnr]
+        if virtbufnr == nil then
+            return
+        end
+        table.insert(virtbuf_availables, virtbufnr)
+
+        buf_to_virtbuf_map[bufnr] = nil
+        virtbuf_to_buf_map[virtbufnr] = nil
+
+    end
+
+    vim.api.nvim_create_autocmd('BufAdd', {
+        group=update_virtbuf,
+        callback=function ()
+            local bufnr = tonumber(vim.fn.expand("<abuf>"))
+            if bufnr == nil then
+                return
+            end
+            virtbuf_append(bufnr)
+        end
+    })
+
+    vim.api.nvim_create_autocmd('BufDelete', {
+        group=update_virtbuf,
+        callback=function ()
+            local bufnr = tonumber(vim.fn.expand("<abuf>"))
+            if bufnr == nil then
+                return
+            end
+            turn_virtbuf_to_available(bufnr)
+        end
+    })
+
+end
+
 function M.run()
     set_hls()
     vim.opt.showtabline = 2
     vim.opt.tabline = '%{%v:lua._mytabline()%}'
+    setup_virtbuf()
 end
 
 return M
