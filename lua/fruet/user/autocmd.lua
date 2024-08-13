@@ -2,7 +2,7 @@ local function run()
     vim.api.nvim_create_autocmd('TextYankPost', {
         group=vim.api.nvim_create_augroup('highlighted_yank_group', {clear=true}),
         callback=function ()
-            vim.highlight.on_yank{higroup = 'IncSearch', timeout='1000'}
+            vim.highlight.on_yank{higroup = 'IncSearch', timeout=1000}
         end
     })
 

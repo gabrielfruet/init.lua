@@ -83,7 +83,7 @@ end
 
 
 local function setup_virtbuf()
-    local update_virtbuf = vim.api.nvim_create_augroup('highlighted_yank_group', {clear=true})
+    local update_virtbuf = vim.api.nvim_create_augroup('update_virtbuf', {clear=true})
     local virtbuf_availables = {}
     local function virtbuf_append(bufnr)
         local idx = table_size(buf_to_virtbuf_map) + table_size(virtbuf_availables) + 1
