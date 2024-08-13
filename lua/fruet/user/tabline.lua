@@ -46,8 +46,6 @@ function MyTabLine()
         s = s .. '%=%#TabLine#%999X'
     end
 
-    vim.print(s)
-
     return s
 end
 

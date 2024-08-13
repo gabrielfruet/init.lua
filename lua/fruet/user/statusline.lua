@@ -46,8 +46,12 @@ local function set_hls()
     local colors_ft = hlutils.get_highlight_color('Function')
     local colors_tlscp = hlutils.get_highlight_color('TelescopeNormal')
     local colors_tsctx = hlutils.get_highlight_color('TreesitterContext')
-    vim.api.nvim_set_hl(0, 'StatusLineFiletype', { bg = colors_ft.fg, fg = colors_tlscp.bg, bold=true})
-    vim.api.nvim_set_hl(0, 'StatusLineFiletypeSymbol', { fg = colors_ft.fg, bg = "none" })
+    local colors_tblsel = hlutils.get_highlight_color('TabLineSel')
+
+    vim.api.nvim_set_hl(0, 'StatusLineFiletypeSel', { bg = colors_ft.fg, fg = colors_tlscp.bg, bold=true})
+    vim.api.nvim_set_hl(0, 'StatusLineFiletypeSymbolSel', { fg = colors_ft.fg, bg = "none" })
+    vim.api.nvim_set_hl(0, 'StatusLineFiletype', { bg = colors_tblsel.bg, fg = colors_tlscp.bg, bold=true})
+    vim.api.nvim_set_hl(0, 'StatusLineFiletypeSymbol', { fg = colors_tblsel.bg, bg = "none" })
     vim.api.nvim_set_hl(0, 'StatusLineBranch', { bg = colors_tsctx.bg, fg = '#ffffff' })
     vim.api.nvim_set_hl(0, 'StatusLineBranchSymbol', { fg = colors_tsctx.bg, bg = "none" })
 
@@ -107,27 +111,37 @@ local function get_icon()
     end
 end
 
-local function filename_widget()
+local function filename_widget(current_window)
     local filename = vim.fn.expand('%:t')
+    local cbufname = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ':t')
+
+    local symbolhl, normalhl
+    if current_window == 1 then
+        symbolhl = 'StatusLineFiletypeSymbolSel'
+        normalhl = 'StatusLineFiletypeSel'
+    else
+        symbolhl = 'StatusLineFiletypeSymbol'
+        normalhl = 'StatusLineFiletype'
+    end
     if filename == '' then
         return ""
     else
         return table.concat{
-            '%#StatusLineFiletypeSymbol#',  -- Highlight group
+            '%#'.. symbolhl .. '#',  -- Highlight group
             '',
-            '%#StatusLineFiletype#',  -- Highlight group
+            '%#' .. normalhl .. '#',  -- Highlight group
             get_icon(),
             ' ',
             '%t',  -- File name (tail)
-            '%#StatusLineFiletypeSymbol#',  -- Highlight group
+            '%#'.. symbolhl .. '#',  -- Highlight group
             '',
             '%*',  -- Reset highlight
         }
     end
 end
 
-function _G._filename_widget()
-    return filename_widget()
+function _G._filename_widget(cw)
+    return filename_widget(cw)
 end
 
 function _G._get_icon()
@@ -225,24 +239,32 @@ function _G._get_mode()
    return get_mode()
 end
 
-
-
-local function setup_statusline()
-    vim.opt.laststatus = 2
-    vim.opt.statusline = table.concat({
+local function mystatusline()
+    local is_cwin = ((vim.g.statusline_winid == vim.fn.win_getid(vim.fn.winnr())) and 1 or 0)
+    return table.concat({
         '%{%v:lua._get_mode()%}',
         '%{%v:lua._branch_name()%}',
         '%r',  -- Read-only flag
         '%h',
         '%m',
         '%=',  -- Separator
-        '%{%v:lua._filename_widget()%}',
+        '%{%v:lua._filename_widget(' .. is_cwin .. ')%}',
         '%=',  -- Separator
         '%{%v:lua._get_diagnostics()%}',
         ' ',
         '%P'
     })
 end
+
+function _G._mystatusline()
+    return mystatusline()
+end
+
+local function setup_statusline()
+    vim.opt.laststatus = 2
+    vim.opt.statusline = '%!v:lua._mystatusline()'
+end
+
 
 function M.run()
     set_hls()
