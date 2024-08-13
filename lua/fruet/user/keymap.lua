@@ -8,6 +8,9 @@ local function run()
     map('n', '<c-q>', '<cmd>qa<cr>', noremap) -- Q uit
     map('n', '<c-e>', '<cmd>qa!<cr>', noremap) -- E xit
 
+    --remove highlights
+    map('n', ',', '<cmd>noh<cr>', noremap)
+
     --escape key
     map('i', 'jk', '<esc>', noremap)
 
@@ -51,7 +54,7 @@ local function run()
     --map('n', '<leader>ws', vim.lsp.buf.workspace_symbol)
 
     --diagnostic
-    map('n', '<leader>vd', vim.diagnostic.open_float, noremap)
+    map('n', '<leader>d', vim.diagnostic.open_float, noremap)
 
     --swapnig lines
     map('n', '<S-Down>', "<cmd>move +1<cr>", silent)

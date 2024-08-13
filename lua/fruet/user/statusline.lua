@@ -174,40 +174,52 @@ function _G._branch_name()
 end
 
 local function get_diagnostics()
-    local diagnostic_count = vim.diagnostic.count(0,{})
+    local diaglist = vim.diagnostic.get(0,{
+        severity = {
+            vim.diagnostic.severity.ERROR,
+            vim.diagnostic.severity.WARN,
+            vim.diagnostic.severity.HINT,
+            vim.diagnostic.severity.INFO,
+        }
+    })
     local severity_mapping = {
         [vim.diagnostic.severity.ERROR] = {
             text='[ERR]',
             icon='X',
             hl='DiagnosticError',
             enabled=true,
+            count = 0,
         },
         [vim.diagnostic.severity.WARN] = {
             text='[WARN]',
             icon='⚠',
             hl='DiagnosticWarn',
             enabled=true,
+            count = 0,
         },
         [vim.diagnostic.severity.INFO] = {
             text='[INFO]',
             hl='DiagnosticInfo',
             enabled=true,
+            count = 0,
         },
         [vim.diagnostic.severity.HINT] = {
             text='[HINT]',
             hl='DiagnosticHint',
-            enabled=false,
+            enabled=true,
+            count = 0,
         },
     }
 
-    for severity, count in pairs(diagnostic_count) do
-        severity_mapping[severity].count = count
+    for _, diagnostic in ipairs(diaglist) do
+        local severity = diagnostic.severity
+        severity_mapping[severity].count = severity_mapping[severity].count + 1
     end
 
     local output = {}
 
     for _, render_data in ipairs(severity_mapping) do
-        render_data.count = render_data.count or 0
+        --render_data.count = render_data.count or 0
         if render_data.count > 0 and render_data.enabled then
             table.insert(output, '%#' .. render_data.hl .. '#')
             table.insert(output, render_data.count or 0)
