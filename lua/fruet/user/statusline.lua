@@ -40,25 +40,12 @@ local mode_map = {
 
 local icons_by_extension = require'nvim-web-devicons'.get_icons_by_extension()
 
-local function get_highlight_color(group_name)
-    local hl_details = vim.api.nvim_get_hl(0, { name = group_name, link=false })
-
-    local function rgb_to_hex(rgb)
-        if not rgb or rgb == "none" then return "none" end
-        return string.format("#%06x", rgb)
-    end
-
-    return {
-        fg = rgb_to_hex(hl_details.fg),
-        bg = rgb_to_hex(hl_details.bg),
-        sp = rgb_to_hex(hl_details.sp)
-    }
-end
+local hlutils = require('fruet.utils.hl')
 
 local function set_hls()
-    local colors_ft = get_highlight_color('Function')
-    local colors_tlscp = get_highlight_color('TelescopeNormal')
-    local colors_tsctx = get_highlight_color('TreesitterContext')
+    local colors_ft = hlutils.get_highlight_color('Function')
+    local colors_tlscp = hlutils.get_highlight_color('TelescopeNormal')
+    local colors_tsctx = hlutils.get_highlight_color('TreesitterContext')
     vim.api.nvim_set_hl(0, 'StatusLineFiletype', { bg = colors_ft.fg, fg = colors_tlscp.bg, bold=true})
     vim.api.nvim_set_hl(0, 'StatusLineFiletypeSymbol', { fg = colors_ft.fg, bg = "none" })
     vim.api.nvim_set_hl(0, 'StatusLineBranch', { bg = colors_tsctx.bg, fg = '#ffffff' })
@@ -243,15 +230,15 @@ end
 local function setup_statusline()
     vim.opt.laststatus = 2
     vim.opt.statusline = table.concat({
-        '%r',  -- Read-only flag
         '%{%v:lua._get_mode()%}',
-        --'%{%v:lua._get_icon()%}',
         '%{%v:lua._branch_name()%}',
+        '%r',  -- Read-only flag
+        '%h',
+        '%m',
         '%=',  -- Separator
         '%{%v:lua._filename_widget()%}',
         '%=',  -- Separator
         '%{%v:lua._get_diagnostics()%}',
-        --'%-14.(%l,%c%V%)',
         ' ',
         '%P'
     })

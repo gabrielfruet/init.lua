@@ -1,3 +1,5 @@
+vim.cmd('source ~/.cache/wal/colors-wal.vim')
+
 vim.g.mapleader = " "
 vim.opt.guicursor = ""
 

@@ -1,4 +1,3 @@
-vim.cmd('source ~/.cache/wal/colors-wal.vim')
 
 local function get_highlight_color(group_name)
     -- Fetch highlight details
@@ -44,6 +43,16 @@ local function configure_highlights()
     set_highlight('NormalFloat', {bg = "none", fg=c.fg})
     set_highlight('WinSeparator', {bg = "none", fg=c.fg})
     set_highlight('TreesitterContext', {bg = c.bg_light, fg=c.fg_light})
+    local tblsel = get_highlight_color('TabLineSel')
+    local tbl = get_highlight_color('TabLine')
+    tblsel.bg = c.bg_light
+    tblsel.bold = true
+    tbl.bg = "none"
+    tbl.fg = c.bg_light
+    set_highlight('TabLineSel', tblsel)
+    set_highlight('Tabline', tbl)
+    set_highlight('TabLineFill', {bg = "none"})
+    set_highlight('TabLineSelSymbol', {bg="none", fg=tblsel.bg})
 
     set_highlight('CmpItemMenu', {bg = c.bg, fg = c.fg})
     set_highlight('BufferLineFill', {bg = c.bg, fg = c.fg})

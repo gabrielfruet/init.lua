@@ -3,7 +3,7 @@ local fg = '#202020'
 return {
     'akinsho/bufferline.nvim',
     dependencies = 'nvim-tree/nvim-web-devicons',
-    enabled=true,
+    enabled=false,
     opts = {
         options = {
             --'slant' conflicts with transparency.
