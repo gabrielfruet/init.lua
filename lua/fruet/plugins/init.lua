@@ -1,6 +1,12 @@
 return {
     "romgrk/nvim-treesitter-context",
     {
+        "nvim-zh/colorful-winsep.nvim",
+        enabled=false,
+        config = true,
+        event = { "WinLeave" },
+    },
+    {
         'xiyaowong/transparent.nvim',
         config = function ()
             require("transparent").setup({ -- Optional, you don't have to run setup.

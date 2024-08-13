@@ -42,6 +42,7 @@ local function configure_highlights()
     -- Apply highlight configurations
     set_highlight('FloatBorder', {bg = "none", fg=c.fg})
     set_highlight('NormalFloat', {bg = "none", fg=c.fg})
+    set_highlight('WinSeparator', {bg = "none", fg=c.fg})
     set_highlight('TreesitterContext', {bg = c.bg_light, fg=c.fg_light})
 
     set_highlight('CmpItemMenu', {bg = c.bg, fg = c.fg})

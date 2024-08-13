@@ -241,6 +241,7 @@ end
 
 
 local function setup_statusline()
+    vim.opt.laststatus = 2
     vim.opt.statusline = table.concat({
         '%r',  -- Read-only flag
         '%{%v:lua._get_mode()%}',
