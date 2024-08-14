@@ -60,6 +60,11 @@ local function run()
     map('n', '<S-Down>', "<cmd>move +1<cr>", silent)
     map('n', '<S-Up>', "<cmd>move -2<cr>", silent)
 
+    --splits
+    map('n', '<leader>sv', '<cmd>vs<cr>')
+    map('n', '<leader>sh', '<cmd>sp<cr>')
+    map('n', '<leader>sc', '<cmd>close<cr>')
+
 end
 
 return {
