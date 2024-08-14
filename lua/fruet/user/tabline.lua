@@ -154,14 +154,30 @@ local function setup_virtbuf()
 
 end
 
-function M.run()
-    set_hls()
-    vim.opt.showtabline = 2
-    vim.opt.tabline = table.concat{
+local function tabline()
+    return table.concat{
         '%{%v:lua._get_mode()%}',
         '%{%v:lua._branch_name()%}',
         '%{%v:lua._mytabline()%}',
     }
+end
+
+_G._tabline = tabline
+
+local function setup_tabline()
+    vim.opt.showtabline = 2
+    vim.opt.tabline = '%!v:lua._tabline()'
+    vim.api.nvim_create_autocmd('ModeChanged', {
+        group=vim.api.nvim_create_augroup('redraw_tabline', {clear=true}),
+        callback=function ()
+            vim.cmd"redrawtabline"
+        end
+    })
+end
+
+function M.run()
+    set_hls()
+    setup_tabline()
     setup_virtbuf()
 end
 
