@@ -1,23 +1,5 @@
 
-local function get_highlight_color(group_name)
-    -- Fetch highlight details
-    local hl_details = vim.api.nvim_get_hl(0, {name=group_name})
-
-    -- Extract and convert color values from RGB to HEX
-    local function rgb_to_hex(rgb)
-        if not rgb or rgb == "none" then return "none" end
-        return string.format("#%06x", rgb)
-    end
-
-    -- Prepare the color information
-    local colors = {
-        fg = rgb_to_hex(hl_details.fg),
-        bg = rgb_to_hex(hl_details.bg),
-        sp = rgb_to_hex(hl_details.sp)
-    }
-
-    return colors
-end
+local hlutils = require('fruet.utils.hl')
 
 local function set_highlight(group, opts)
     vim.api.nvim_set_hl(0, group, opts)
@@ -25,14 +7,14 @@ end
 
 local function configure_highlights()
     local c = {
-        prompt = get_highlight_color("Visual").bg,
+        prompt = hlutils.get_highlight_color("Visual").bg,
         bg = vim.g.background,
         fg = vim.g.foreground,
         bg_dark = vim.g.color1,
         fg_dark = vim.g.color1,
         bg_light = vim.g.color8,
         fg_light = vim.g.color8,
-        selected = get_highlight_color("BlueItalic").fg,
+        selected = hlutils.get_highlight_color("BlueItalic").fg,
         white = '#ffffff',
     }
     set_highlight('StatusLine', {bg = "none", fg=c.fg})
@@ -43,8 +25,8 @@ local function configure_highlights()
     set_highlight('NormalFloat', {bg = "none", fg=c.fg})
     set_highlight('WinSeparator', {bg = "none", fg=c.fg})
     set_highlight('TreesitterContext', {bg = c.bg_light, fg=c.fg_light})
-    local tblsel = get_highlight_color('TabLineSel')
-    local tbl = get_highlight_color('TabLine')
+    local tblsel = hlutils.get_highlight_color('TabLineSel')
+    local tbl = hlutils.get_highlight_color('TabLine')
     tblsel.bg = c.bg_light
     tblsel.bold = true
     tbl.bg = "none"
@@ -59,11 +41,12 @@ local function configure_highlights()
     set_highlight('BufferLineFill', {bg = c.bg, fg = c.fg})
     set_highlight('Pmenu', {bg = c.bg, fg = c.fg})
 
-    local da = get_highlight_color('DiffAdd')
+    local da = hlutils.get_highlight_color('DiffAdd')
     set_highlight('TelescopeSelection', {bg = da.bg, fg = c.selected})
     set_highlight('CmpItemAbbrMatch', {bg = da.bg, fg = c.selected})
 
 
+    set_highlight('CursorLineNr', {bg = "none", fg='#ffffff'})
     set_highlight('InfoText', {bg = c.bg, fg=c.fg})
     set_highlight('TelescopeNormal', {bg = c.bg, fg = c.fg})
     set_highlight('TelescopePromptBorder', {bg = c.bg, fg = c.bg})

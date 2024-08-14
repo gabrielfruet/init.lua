@@ -147,7 +147,6 @@ function M.run()
     vim.opt.tabline = table.concat{
         '%{%v:lua._get_mode()%}',
         '%{%v:lua._branch_name()%}',
-        '      ',
         '%{%v:lua._mytabline()%}',
     }
     setup_virtbuf()

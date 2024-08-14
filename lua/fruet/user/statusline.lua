@@ -221,8 +221,9 @@ local function branch_name()
             branch_icon,
             ' ',
             branch,
+            ' ',
             '%#StatusLineBranchSymbol#',
-            '',
+            --'',
             --'',
             '%*'
         }
