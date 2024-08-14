@@ -59,6 +59,7 @@ local function run()
     --swapnig lines
     map('n', '<S-Down>', "<cmd>move +1<cr>", silent)
     map('n', '<S-Up>', "<cmd>move -2<cr>", silent)
+
 end
 
 return {

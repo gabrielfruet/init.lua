@@ -17,17 +17,16 @@ local function configure_highlights()
         selected = hlutils.get_highlight_color("BlueItalic").fg,
         white = '#ffffff',
     }
-    set_highlight('StatusLine', {bg = "none", fg=c.fg})
-    set_highlight('StatusLineNC', {bg = "none", fg=c.fg_light})
+
 
     -- Apply highlight configurations
     set_highlight('FloatBorder', {bg = "none", fg=c.fg})
     set_highlight('NormalFloat', {bg = "none", fg=c.fg})
-    set_highlight('WinSeparator', {bg = "none", fg=c.fg})
     set_highlight('TreesitterContext', {bg = c.bg_light, fg=c.fg_light})
     local tblsel = hlutils.get_highlight_color('TabLineSel')
     local tbl = hlutils.get_highlight_color('TabLine')
-    tblsel.bg = c.bg_light
+    --tblsel.bg = c.bg_light
+    tblsel.bg = "none"
     tblsel.bold = true
     tbl.bg = "none"
     tbl.fg = c.bg_light
@@ -46,22 +45,20 @@ local function configure_highlights()
     set_highlight('CmpItemAbbrMatch', {bg = da.bg, fg = c.selected})
 
 
-    set_highlight('CursorLineNr', {bg = "none", fg='#ffffff'})
+    set_highlight('CursorLineNr', {bg = "none", fg=c.fg})
     set_highlight('InfoText', {bg = c.bg, fg=c.fg})
     set_highlight('TelescopeNormal', {bg = c.bg, fg = c.fg})
     set_highlight('TelescopePromptBorder', {bg = c.bg, fg = c.bg})
     set_highlight('TelescopeResultsBorder', {bg = c.bg, fg = c.bg})
     set_highlight('TelescopePreviewBorder', {bg = c.bg, fg = c.bg})
-    --set_highlight('TelescopePromptNormal', {bg = c.bg_light, fg = c.fg_light})
-    --set_highlight('TelescopePromptCounter', {bg = c.bg_light, fg = c.fg_light})
-    --set_highlight('TelescopePromptTitle', {bg = c.bg_light, fg = c.fg_light})
-
-    --set_highlight('TelescopePreviewTitle', {bg = c.bg_dark, fg = c.bg_dark})
-    --set_highlight('TelescopeResultsTitle', {bg = c.bg_dark, fg = c.bg_dark})
 
     set_highlight('AutorunNone', {bg = c.bg_dark, fg = c.fg_dark})
     set_highlight('AutorunRounded', {bg = c.bg, fg = c.fg})
     set_highlight('AutorunSolid', {bg = c.bg, fg = c.fg})
+
+    set_highlight('StatusLine', {bg = "none", fg=c.fg_light})
+    set_highlight('StatusLineNC', {bg = "none", fg=c.fg_light})
+    set_highlight('WinSeparator', {bg = 'none', fg=c.fg_light, sp="none"})
 end
 
 -- Example usage: Define a color scheme and apply it

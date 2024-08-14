@@ -5,7 +5,8 @@ local virtbuf_to_buf_map = {}
 
 _G.virtbuf_to_buf_map = virtbuf_to_buf_map
 
-local icons_by_extension = require'nvim-web-devicons'.get_icons_by_extension()
+local stline = require('fruet.user.statusline')
+local nvim_web_dev_get_icon = require'nvim-web-devicons'.get_icon
 
 local function hl_wrapper(hl)
     return function (text)
@@ -42,11 +43,11 @@ function MyTabLine()
         if bufname == "" then
             dispname = "[No Name]"
         end
-        -- idiomatic way of getting the icon as the tbl can be nil
-        local icon = icons_by_extension[extension] and icons_by_extension[extension].icon or ''
+        local unsaved_icon = vim.api.nvim_get_option_value('modified',{buf=bufnr}) and '*' or ''
+        local icon = nvim_web_dev_get_icon(dispname, extension, {default=true})
         local symbr = ''
         local symbl = ''
-        s = string.format("%s%s %s %s %%*", s,  bufnrhl(' ' .. virtbuf), tablinehl(icon), tablinehl(dispname))
+        s = string.format("%s%s %s %s %%*", s,  bufnrhl(' ' .. virtbuf .. unsaved_icon), tablinehl(icon), tablinehl(dispname))
     end
 
     -- After the last buffer, fill with TabLineFill

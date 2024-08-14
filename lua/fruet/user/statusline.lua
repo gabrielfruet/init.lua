@@ -39,7 +39,7 @@ local mode_map = {
   ['t']      = 'TERMINAL',
 }
 
-local icons_by_extension = require'nvim-web-devicons'.get_icons_by_extension()
+local nvim_web_dev_get_icon = require'nvim-web-devicons'.get_icon
 
 local hlutils = require('fruet.utils.hl')
 
@@ -51,11 +51,16 @@ local function set_hls()
 
     vim.api.nvim_set_hl(0, 'StatusLineFiletypeSel', { bg = colors_ft.fg, fg = colors_tlscp.bg, bold=true})
     vim.api.nvim_set_hl(0, 'StatusLineFiletypeSymbolSel', { fg = colors_ft.fg, bg = "none" })
-    vim.api.nvim_set_hl(0, 'StatusLineFiletype', { bg = colors_tblsel.bg, fg = colors_tlscp.bg, bold=true})
-    vim.api.nvim_set_hl(0, 'StatusLineFiletypeSymbol', { fg = colors_tblsel.bg, bg = "none" })
-    vim.api.nvim_set_hl(0, 'StatusLineBranch', { bg = colors_tsctx.bg, fg = '#ffffff' })
+    vim.api.nvim_set_hl(0, 'StatusLineFiletype', { bg = colors_tsctx.bg, fg = colors_tlscp.bg, bold=true})
+    vim.api.nvim_set_hl(0, 'StatusLineFiletypeSymbol', { fg = colors_tsctx.bg, bg = "none" })
+    vim.api.nvim_set_hl(0, 'StatusLineBranch', { bg = colors_tsctx.bg, fg = vim.g.foregroun })
     vim.api.nvim_set_hl(0, 'StatusLineBranchSymbol', { fg = colors_tsctx.bg, bg = "none" })
 
+    vim.api.nvim_set_hl(0, 'StatusLineInfo', { bg = "none", fg = vim.g.foreground })
+    vim.api.nvim_set_hl(0, 'StatusLineInfoSymbol', { fg = vim.g.foreground, bg = 'none' })
+
+    vim.api.nvim_set_hl(0, 'StatusLineInfoNC', { bg = "none", fg = vim.g.color8 })
+    vim.api.nvim_set_hl(0, 'StatusLineInfoSymbolNC', { fg = vim.g.color8, bg = 'none' })
 
     vim.api.nvim_set_hl(0, 'StatusLineModeN', {
         bg = '#458588',  -- Gruvbox Blue
@@ -100,13 +105,14 @@ local function set_hls()
 
 end
 
-local function get_icon()
+function M.get_icon()
+    local fname = vim.fn.expand("%:t")
     local extension = vim.fn.expand("%:e")
-    local icon_details = icons_by_extension[extension]
-    if icon_details == nil then
+    local icon, iconhl = nvim_web_dev_get_icon(fname, extension, {default=true})
+    if icon == nil then
         return ""
     else
-        return icon_details.icon
+        return icon
     end
 end
 
@@ -128,7 +134,7 @@ local function filename_widget(current_window)
             '%#'.. symbolhl .. '#',  -- Highlight group
             '',
             '%#' .. normalhl .. '#',  -- Highlight group
-            get_icon(),
+            M.get_icon(),
             ' ',
             '%t',  -- File name (tail)
             '%#'.. symbolhl .. '#',  -- Highlight group
@@ -143,7 +149,7 @@ function _G._filename_widget(cw)
 end
 
 function _G._get_icon()
-    return get_icon()
+    return M.get_icon()
 end
 
 
@@ -159,14 +165,14 @@ local function get_diagnostics()
     local severity_mapping = {
         [vim.diagnostic.severity.ERROR] = {
             text='[ERR]',
-            icon='X',
+            icon='✘',
             hl='DiagnosticError',
             enabled=true,
             count = 0,
         },
         [vim.diagnostic.severity.WARN] = {
             text='[WARN]',
-            icon='⚠',
+            icon='▲',
             hl='DiagnosticWarn',
             enabled=true,
             count = 0,
@@ -174,12 +180,14 @@ local function get_diagnostics()
         [vim.diagnostic.severity.INFO] = {
             text='[INFO]',
             hl='DiagnosticInfo',
+            icon='ℹ️',
             enabled=true,
             count = 0,
         },
         [vim.diagnostic.severity.HINT] = {
             text='[HINT]',
             hl='DiagnosticHint',
+            icon='💡',
             enabled=true,
             count = 0,
         },
@@ -192,12 +200,18 @@ local function get_diagnostics()
 
     local output = {}
 
+    local ICONS = false
+
     for _, render_data in ipairs(severity_mapping) do
         --render_data.count = render_data.count or 0
         if render_data.count > 0 and render_data.enabled then
             table.insert(output, '%#' .. render_data.hl .. '#')
             table.insert(output, render_data.count or 0)
-            table.insert(output, render_data.text)
+            if ICONS then
+                table.insert(output, render_data.icon)
+            else
+                table.insert(output, render_data.text)
+            end
             table.insert(output, '%*')
         end
     end
@@ -221,9 +235,8 @@ local function branch_name()
             branch_icon,
             ' ',
             branch,
-            ' ',
             '%#StatusLineBranchSymbol#',
-            --'',
+            '',
             --'',
             '%*'
         }
@@ -254,18 +267,23 @@ end
 
 local function mystatusline()
     local is_cwin = ((vim.g.statusline_winid == vim.fn.win_getid(vim.fn.winnr())) and 1 or 0)
+    local infohl = is_cwin == 1 and '%#StatusLineInfo#' or '%#StatusLineInfoNC#'
     return table.concat({
-        --'%{%v:lua._get_mode()%}',
-        --'%{%v:lua._branch_name()%}',
+        infohl,
         '%{%v:lua._get_diagnostics()%}',
         '%r',  -- Read-only flag
         '%h',
         '%m',
+        '%q',
+        '%*',
         '%=',  -- Separator
         '%{%v:lua._filename_widget(' .. is_cwin .. ')%}',
         '%=',  -- Separator
+        infohl,
+        '[%l/%L]',
         ' ',
-        '%P'
+        '%p%%',
+        ' '
     })
 end
 

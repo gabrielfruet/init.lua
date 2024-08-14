@@ -25,8 +25,12 @@ vim.opt.cmdheight = 1
 -- delays and poor user experience.
 vim.opt.updatetime = 50
 vim.opt.termguicolors=true
-vim.opt.winblend = 0
+--vim.opt.winblend = 0
 vim.opt.laststatus = 2
+vim.opt.background='dark'
+vim.opt.fillchars = {
+    stl = "─"
+}
 
 --vim.cmd[[set -g default-terminal "xterm-256color"]]
 --vim.cmd[[set-option -ga terminal-overrides ",xterm-256color:Tc"]]
