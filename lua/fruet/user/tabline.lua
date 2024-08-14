@@ -140,6 +140,18 @@ local function setup_virtbuf()
         end
     })
 
+    vim.api.nvim_create_autocmd('VimEnter', {
+        group=update_virtbuf,
+        callback=function ()
+            local bufnrlist = vim.fn.getbufinfo({buflisted=1})
+
+            for _, buf in ipairs(bufnrlist) do
+                local bufnr = buf.bufnr
+                virtbuf_append(bufnr)
+            end
+        end
+    })
+
 end
 
 function M.run()
