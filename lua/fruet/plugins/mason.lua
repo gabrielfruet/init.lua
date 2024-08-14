@@ -1,5 +1,6 @@
 return {
     "williamboman/mason.nvim",
+    priority=100,
     opts = {
         ui = {
             icons = {
