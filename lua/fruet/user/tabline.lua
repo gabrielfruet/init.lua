@@ -1,5 +1,7 @@
 local M = {}
 
+-- #TODO change the 'widgets' code to a separate file
+
 local buf_to_virtbuf_map = {}
 local virtbuf_to_buf_map = {}
 
@@ -84,6 +86,7 @@ end
 
 
 local function setup_virtbuf()
+    -- #TODO refactor virtbuffer tables to a single table that has methods in it
     local update_virtbuf = vim.api.nvim_create_augroup('update_virtbuf', {clear=true})
     local virtbuf_availables = {}
     local function virtbuf_append(bufnr)
