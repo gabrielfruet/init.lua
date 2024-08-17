@@ -73,6 +73,7 @@ local function set_hls()
     local base_fg = vim.g.foreground
     vim.api.nvim_set_hl(0, 'TabLineBufNumSel', { bg = colors_tblsel.bg, fg = base_fg, bold=true, italic=true})
     vim.api.nvim_set_hl(0, 'TabLineBufNum', { fg = base_fg, bg = "none", bold=true})
+    vim.api.nvim_set_hl(0, 'TabLineCwd', { bg = "none", fg = colors_kw.fg, italic=true})
 
 end
 
@@ -166,6 +167,7 @@ local function current_working_directory()
     end
 
     return table.concat{
+        '%#TabLineCwd#',
         '[',
         cwd,
         ']'

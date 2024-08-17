@@ -10,6 +10,28 @@ local commands = {
         filetype='rust',
         cmd={'cargo run'}
     };
+    go = {
+        filetype = 'go',
+        callback = function()
+            local gopaths = vim.fs.find('main.go',{
+                upward=false,
+                limit=10,
+                path=vim.fn.getcwd()
+            })
+            local cmds = {}
+            for _,gopath in pairs(gopaths) do
+                local dirname = vim.fs.dirname(gopath:gsub(vim.fn.getcwd(), '.'))
+                table.insert(cmds, {
+                    string.format('go build -C %s -o main.o', dirname),
+                    text_render=string.format('Go: build %s', dirname),
+                    output={
+                        'quickfix'
+                    }
+                })
+            end
+            return cmds
+        end
+    },
     python={
         filetype='python',
         callback=function()
@@ -55,6 +77,7 @@ local commands = {
                 for _, target in pairs(get_makefile_targets(mkpath)) do
                     table.insert(makecmd, {
                         string.format('make %s -f %s', target, mkpath),
+                        text_render=string.format('Make: make %s at %s', target, mkpath:gsub(vim.fn.getcwd(), '.')),
                         output={
                             'quickfix'
                         }
@@ -293,8 +316,6 @@ function CommandBuilder:new(o)
     self.__index = self
     return o
 end
-
-
 
 ---@return CommandOptions[]
 function CommandBuilder:get_commands()

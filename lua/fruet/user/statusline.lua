@@ -308,6 +308,18 @@ function _G._get_mode()
    return get_mode()
 end
 
+local function get_lsp_attached()
+    local clients = vim.lsp.get_active_clients({bufnr=0})
+    if #clients == 0 then return '' end
+    local output = '⚙'
+    for _, client in ipairs(clients) do
+        output = output .. ' ' .. client.name
+    end
+    return output
+end
+
+_G._get_lsp_attached = get_lsp_attached
+
 local function mystatusline()
     local is_cwin = ((vim.g.statusline_winid == vim.fn.win_getid(vim.fn.winnr())) and 1 or 0)
     local infohl = is_cwin == 1 and '%#StatusLineInfo#' or '%#StatusLineInfoNC#'
