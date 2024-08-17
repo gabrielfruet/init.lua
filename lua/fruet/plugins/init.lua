@@ -22,7 +22,17 @@ return {
             })
         end
 
+    },
+    {
+        'chentoast/marks.nvim',
+        -- mouse is flickering
+        enabled=false,
+        config = function ()
+            require'marks'.setup{}
+        end
     }
+
+
     --"nvim-lua/plenary.nvim",
     --"nvim-treesitter/playground",
     --"sbdchd/neoformat",

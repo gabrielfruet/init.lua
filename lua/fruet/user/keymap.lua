@@ -65,6 +65,12 @@ local function run()
     map('n', '<leader>sh', '<cmd>sp<cr>')
     map('n', '<leader>sc', '<cmd>close<cr>')
 
+    --quickfix
+    map('n', '<leader>co', '<cmd>copen<cr>')
+    map('n', '<leader>cn', '<cmd>cnext<cr>')
+    map('n', '<leader>cp', '<cmd>cprevious<cr>')
+    map('n', '<leader>cc', '<cmd>cclose<cr>')
+
 end
 
 return {

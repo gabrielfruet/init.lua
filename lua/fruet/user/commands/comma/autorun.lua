@@ -8,68 +8,79 @@ local lang_command = {
 local commands = {
     rust={
         filetype='rust',
-        cmd='cargo run'
+        cmd={'cargo run'}
     };
     python={
         filetype='python',
-        callback=function(bufnr)
-            local fpath = vim.api.nvim_buf_get_name(bufnr)
-            return 'python ' .. fpath
+        callback=function()
+            local fpath = vim.api.nvim_buf_get_name(0)
+            return {
+                'python ' .. fpath,
+                output={
+                    'split'
+                }
+            }
         end
     };
     make={
-        callback=function(bufnr)
+        callback=function()
+            local function get_makefile_targets(makefile_path)
+                local targets = {}
+                local file = io.open(makefile_path, "r")
+
+                if not file then
+                    print("Makefile not found: " .. makefile_path)
+                    return targets
+                end
+
+                for line in file:lines() do
+                    local target = line:match("^([%w-_]+):")
+                    if target then
+                        table.insert(targets, target)
+                    end
+                end
+        -- mouse is flickering
+                file:close()
+
+                return targets
+            end
+
             local makepath = vim.fs.find('Makefile',{
                 upward=true,
                 stop=vim.loop.os_homedir(),
-                path=vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr))
+                path=vim.fn.getcwd()
             })
             local makecmd = {}
-            for i,mkpath in ipairs(makepath) do
-                makecmd[i] = 'make -f ' .. mkpath
+            for _,mkpath in pairs(makepath) do
+                for _, target in pairs(get_makefile_targets(mkpath)) do
+                    table.insert(makecmd, {
+                        string.format('make %s -f %s', target, mkpath),
+                        output={
+                            'quickfix'
+                        }
+                    })
+                end
             end
             return makecmd
         end
     },
     bash={
         filetype='sh',
-        callback=function (bufnr)
-            local fpath = vim.api.nvim_buf_get_name(bufnr)
-            return fpath
+        callback=function ()
+            local fpath = vim.api.nvim_buf_get_name(0)
+            return {
+                fpath,
+                output = {
+                    'split'
+                }
+            }
         end
     }
 }
 
-local function available_commands(bufnr)
-    local matched = {}
-    for k,v in pairs(commands) do
-        if v.filetype == nil or v.filetype == vim.filetype.match({buf=bufnr}) then
-            vim.print(matched)
-            if v.callback ~= nil then
-                local cmd = v.callback(bufnr)
-                if cmd ~= nil then
-                    table.insert(matched, cmd)
-                end
-            end
-
-            if v.cmd ~= nil and type(v.cmd) == 'string' then
-                table.insert(matched, v.cmd)
-            end
-
-        end
-    end
-
-    vim.print(matched)
-
-    return vim.tbl_flatten(matched)
-end
-
-local function get_command(filepath, lang)
-    local create_command = lang_command[lang]
-    if create_command == nil then
-        return nil
-    end
-    return create_command(filepath)
+local function to_quickfix(cmd)
+    vim.cmd(string.format('cexpr system(\'%s\')', cmd))
+    vim.cmd'copen'
 end
 
 local function remove_filtered(tbl, filter)
@@ -171,14 +182,38 @@ local function buffer_to_floating_window(bufnr, opts)
     return winhan
 end
 
---- @param cmd string
---- @param bufnr integer
-local function run_command(cmd, bufnr)
-    local buf_name = cmd
+local function buffer_to_bot_window(bufnr,opts)
+    local win_width = vim.api.nvim_win_get_width(0)
+    local win_height = vim.api.nvim_win_get_height(0)
 
-    local winhan = buffer_to_floating_window(bufnr, {
-        buf_name = buf_name
-    })
+    local scale = 0.2
+    if opts.scale ~= nil then scale = opts.scale end
+
+    local height = math.floor(win_height * scale)
+    local width = math.floor(win_width * scale)
+
+    local col = math.floor((win_width - width )/2)
+    local row = math.floor((win_height - height )/2)
+
+    local buf_name = 'Unnamed'
+    if opts.buf_name ~= nil then buf_name = opts.buf_name end
+
+    vim.cmd[[split]]
+    vim.cmd[[wincmd j]]
+    local winhan = vim.api.nvim_get_current_win()
+    vim.api.nvim_win_set_buf(winhan, bufnr)
+    vim.api.nvim_win_set_height(winhan,height)
+
+    vim.bo.bufhidden = "delete"
+    vim.bo.modifiable = true
+    --
+    return winhan
+end
+
+local function buffer_to_winfn(cmd, winfn)
+    local buf_name = cmd
+    local bufnr = bufops.get_output_buffer()
+    local winhan = winfn(bufnr, {buf_name=buf_name})
 
     local job_id = vim.fn.jobstart(cmd, {
         on_stdout = buf_on_output(bufnr, winhan),
@@ -194,6 +229,12 @@ local function run_command(cmd, bufnr)
     local only_clear = {clear=true}
     local stop_job_on_buf_deletion = vim.api.nvim_create_augroup('StopJobAfterBufDelete', only_clear)
 
+    vim.keymap.set('n', 'q', function()
+        vim.api.nvim_buf_delete(bufnr, {})
+    end, { noremap = true, silent = true, buffer=bufnr})
+
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-r>', '', { noremap = true, silent = true })
+
     vim.api.nvim_create_autocmd('BufDelete', {
         group=stop_job_on_buf_deletion,
         buffer=bufnr,
@@ -203,33 +244,124 @@ local function run_command(cmd, bufnr)
     })
 end
 
+---@class CommandOptions
+---@field cmd string
+---@field output table
+---@field text_render? string
+local CommandOptions = {output={'split'}}
+
+local CommandOptionsRunMethod = {
+    quickfix=to_quickfix,
+    float=function(cmd) return buffer_to_winfn(cmd, buffer_to_floating_window) end,
+    split=function(cmd) return buffer_to_winfn(cmd, buffer_to_bot_window) end,
+}
+
+function CommandOptions:new(o)
+    o = o or {}   -- create object if user does not provide one
+    o.output = o.output or CommandOptions.output
+    setmetatable(o, self)
+    self.__index = self
+    return o
+end
+
+function CommandOptions.wrap(o)
+    if type(o[1]) == 'string' then
+        return {CommandOptions:new(o)}
+    else
+        local tbl = {}
+        for _,obj in pairs(o) do
+            vim.list_extend(tbl, CommandOptions.wrap(obj))
+        end
+        return tbl
+    end
+end
+
+function CommandOptions:exec()
+    local method = self.output[1]
+    CommandOptionsRunMethod[method](self[1])
+end
+
+---@class CommandBuilder
+---@field filetype? string
+---@field cmd? string
+---@field callback? function
+local CommandBuilder = {}
+
+function CommandBuilder:new(o)
+    o = o or {}   -- create object if user does not provide one
+    setmetatable(o, self)
+    self.__index = self
+    return o
+end
+
+
+
+---@return CommandOptions[]
+function CommandBuilder:get_commands()
+    local matched = {}
+    if self.filetype == nil or self.filetype == vim.bo.filetype then
+        if self.callback ~= nil then
+            local cmd = CommandOptions.wrap(self.callback())
+            if cmd ~= nil then
+                vim.list_extend(matched, cmd)
+            end
+        end
+
+        if self.cmd ~= nil and type(self.cmd) == 'string' then
+            table.insert(matched, CommandOptions:new(self.cmd))
+        end
+    end
+    return matched
+end
+
+
+---@return CommandOptions[]
+local function available_commands()
+    local matched = {}
+    for _,v in pairs(commands) do
+        vim.list_extend(matched, CommandBuilder:new(v):get_commands())
+    end
+
+    return matched
+end
+
+local function get_command(filepath, lang)
+    local create_command = lang_command[lang]
+    if create_command == nil then
+        return nil
+    end
+    return create_command(filepath)
+end
+
+
+
+--- @param cmd CommandOptions
+local function run_command(cmd)
+    cmd:exec()
+end
+
 local function show_error(msg)
     vim.api.nvim_echo({{msg, 'ErrorMsg'}}, false, {})
 end
 
 local function autorun()
-    local available_cmds = available_commands(0)
-
-    local bufnr = bufops.get_output_buffer()
-
-    vim.keymap.set('n', 'q', function()
-        vim.api.nvim_buf_delete(bufnr, {})
-    end, { noremap = true, silent = true, buffer=bufnr})
-
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-r>', '', { noremap = true, silent = true })
-
+    local available_cmds = available_commands()
 
     if #available_cmds < 1 then
         show_error('No command available')
         return
     elseif #available_cmds == 1 then
-        run_command(available_cmds[1], bufnr)
+        run_command(available_cmds[1])
     else
         vim.ui.select(available_cmds, {
-            prompt='What command you want to run?'
+            prompt='What command you want to run?',
+            ---@param item CommandOptions
+            format_item = function (item)
+                return item.text_render or item[1]
+            end
         }, function(cmd)
-                if cmd ~= nil and type(cmd) == 'string' then
-                    run_command(cmd, bufnr)
+                if cmd ~= nil then
+                    run_command(cmd)
                 else
                     show_error('Didn`t choose any')
                 end
@@ -239,7 +371,7 @@ end
 
 
 return {
-    run = function ()
+        run = function ()
         vim.api.nvim_create_user_command('AutoRun', function() autorun() end, {})
         vim.api.nvim_create_user_command('AutoRunSetOutBuf', function() bufops.set_ouptut_buffer() end, {})
         vim.keymap.set("n", "<C-r>", autorun , {noremap=true})

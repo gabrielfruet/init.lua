@@ -62,6 +62,8 @@ local function set_hls()
     vim.api.nvim_set_hl(0, 'StatusLineInfoNC', { bg = "none", fg = vim.g.color8 })
     vim.api.nvim_set_hl(0, 'StatusLineInfoSymbolNC', { fg = vim.g.color8, bg = 'none' })
 
+    --NORMAL DEFINITIONS
+
     vim.api.nvim_set_hl(0, 'StatusLineModeN', {
         bg = '#458588',  -- Gruvbox Blue
         fg = '#ebdbb2'   -- Gruvbox Light0
@@ -101,6 +103,48 @@ local function set_hls()
     vim.api.nvim_set_hl(0, 'StatusLineModeT', {
         bg = '#a89984',  -- Gruvbox Gray
         fg = '#282828'   -- Gruvbox Dark0
+    })
+
+    --SYMBOLS DEFINITION
+    vim.api.nvim_set_hl(0, 'StatusLineModeNSymbol', {
+        fg = '#458588',  -- Gruvbox Blue
+        bg = "none" -- Gruvbox Light0
+    })
+    vim.api.nvim_set_hl(0, 'StatusLineModeOSymbol', {
+        fg = '#d79921',  -- Gruvbox Yellow
+        bg = "none" -- Gruvbox Dark0
+    })
+    vim.api.nvim_set_hl(0, 'StatusLineModeVSymbol', {
+        fg = '#b16286',  -- Gruvbox Purple
+        bg = "none" -- Gruvbox Light0
+    })
+    vim.api.nvim_set_hl(0, 'StatusLineModeRSymbol', {
+        fg = '#cc241d',  -- Gruvbox Red
+        bg = "none" -- Gruvbox Light0
+    })
+    vim.api.nvim_set_hl(0, 'StatusLineModeISymbol', {
+        fg = '#98971a',  -- Gruvbox Green
+        bg = "none" -- Gruvbox Dark0
+    })
+    vim.api.nvim_set_hl(0, 'StatusLineModeSSymbol', {
+        fg = '#d65d0e',  -- Gruvbox Orange
+        bg = "none" -- Gruvbox Dark0
+    })
+    vim.api.nvim_set_hl(0, 'StatusLineModeMSymbol', {
+        fg = '#fe8019',  -- Gruvbox Bright Orange
+        bg = "none" -- Gruvbox Dark0
+    })
+    vim.api.nvim_set_hl(0, 'StatusLineModeESymbol', {
+        fg = '#fb4934',  -- Gruvbox Bright Red
+        bg = "none" -- Gruvbox Dark0
+    })
+    vim.api.nvim_set_hl(0, 'StatusLineModeCSymbol', {
+        fg = '#689d6a',  -- Gruvbox Aqua
+        bg = "none" -- Gruvbox Dark0
+    })
+    vim.api.nvim_set_hl(0, 'StatusLineModeTSymbol', {
+        fg = '#a89984',  -- Gruvbox Gray
+        bg = "none" -- Gruvbox Dark0
     })
 
 end
@@ -236,9 +280,8 @@ local function branch_name()
             ' ',
             branch,
             '%#StatusLineBranchSymbol#',
-            '',
+            --'',
             --'',
-            '%*'
         }
 	else
 		return ""
@@ -251,13 +294,13 @@ end
 
 local function get_mode()
     local hl_code = mode_map[vim.api.nvim_get_mode().mode]:sub(1,1)
-    get_diagnostics()
+    --get_diagnostics()
     return table.concat{
         '%#StatusLineMode' .. hl_code:upper() .. '#',
         ' ',
         mode_map[vim.api.nvim_get_mode().mode],
         ' ',
-        '%*'
+        '%#StatusLineMode' .. hl_code:upper() .. 'Symbol#',
     }
 end
 

@@ -157,11 +157,39 @@ local function setup_virtbuf()
 
 end
 
-local function tabline()
+local function current_working_directory()
+    local cwd = vim.fn.getcwd()
+    local home = vim.fn.expand('~')
+
+    if string.find(cwd, home, 1, true) == 1 then 
+      cwd = '~' .. string.sub(cwd, #home + 1)
+    end
+
+    return table.concat{
+        '[',
+        cwd,
+        ']'
+    }
+end
+
+_G._cwd = current_working_directory
+
+local function tabline_lhs()
     return table.concat{
         '%{%v:lua._get_mode()%}',
         '%{%v:lua._branch_name()%}',
+        '',
+        '%*',
+    }
+end
+
+local function tabline()
+    return table.concat{
+        tabline_lhs(),
         '%{%v:lua._mytabline()%}',
+        '%=',
+        '%{%v:lua._cwd()%}'
+
     }
 end
 

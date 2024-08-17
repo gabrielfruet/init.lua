@@ -6,6 +6,13 @@ local function run()
         end
     })
 
+    vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'qf',
+        callback = function()
+            vim.api.nvim_buf_set_keymap(0, 'n', 'q', ':cclose<CR>', { noremap = true, silent = true })
+        end
+    })
+
     local function switch_to_buffer(virtbuf)
         -- Check if the buffer exists
         local bufnr = _G.virtbuf_to_buf_map[virtbuf]
