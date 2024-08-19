@@ -55,6 +55,7 @@ local function run()
 
     --diagnostic
     map('n', '<leader>d', vim.diagnostic.open_float, noremap)
+    map('n', '<leader>dq', vim.diagnostic.setloclist, noremap)
 
     --swapnig lines
     map('n', '<S-Down>', "<cmd>move +1<cr>", silent)
@@ -70,6 +71,16 @@ local function run()
     map('n', '<leader>cn', '<cmd>cnext<cr>')
     map('n', '<leader>cp', '<cmd>cprevious<cr>')
     map('n', '<leader>cc', '<cmd>cclose<cr>')
+    map('n', '<leader>cj', '<cmd>cnewer<cr>')
+    map('n', '<leader>ck', '<cmd>colder<cr>')
+
+    --locationlist
+    map('n', '<leader>lo', '<cmd>lopen<cr>')
+    map('n', '<leader>ln', '<cmd>lnext<cr>')
+    map('n', '<leader>lp', '<cmd>lprevious<cr>')
+    map('n', '<leader>lc', '<cmd>lclose<cr>')
+    map('n', '<leader>lj', '<cmd>lnewer<cr>')
+    map('n', '<leader>lk', '<cmd>lolder<cr>')
 
 end
 

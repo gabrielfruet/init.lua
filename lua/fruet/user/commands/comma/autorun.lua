@@ -102,8 +102,30 @@ local commands = {
 }
 
 local function to_quickfix(cmd)
-    vim.cmd(string.format('cexpr system(\'%s\')', cmd))
-    vim.cmd'copen'
+    local lines = {}
+    local function output(chan_id, data, name)
+        if data then
+            for _, chunk in pairs(data) do
+                table.insert(lines, chunk)
+            end
+        end
+    end
+    local job_id = vim.fn.jobstart(cmd, {
+        on_stdout = output,
+        on_stderr = output,
+        on_exit = function(id, code, event)
+            vim.print(lines)
+            vim.fn.setqflist({}, ' ', {
+                lines = lines
+            })
+            vim.cmd'copen'
+        end,
+        stdout_buffered = false,
+        --pty=true,
+    })
+
+    --vim.cmd(string.format('cexpr system(\'%s\')', cmd))
+    --vim.cmd'copen'
 end
 
 local function remove_filtered(tbl, filter)
