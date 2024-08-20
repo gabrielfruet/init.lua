@@ -91,6 +91,9 @@ local function setup_virtbuf()
     local update_virtbuf = vim.api.nvim_create_augroup('update_virtbuf', {clear=true})
     local virtbuf_availables = {}
     local function virtbuf_append(bufnr)
+        if buf_to_virtbuf_map[bufnr] ~= nil then
+            return
+        end
         local idx = table_size(buf_to_virtbuf_map) + table_size(virtbuf_availables) + 1
         local i_idx = -1
 
@@ -126,7 +129,9 @@ local function setup_virtbuf()
         group=update_virtbuf,
         callback=function ()
             local bufnr = tonumber(vim.fn.expand("<abuf>"))
-            if bufnr == nil then
+            local ft = vim.api.nvim_get_option_value('filetype', {buf=bufnr})
+            -- vim.print(ft)
+            if bufnr == nil or ft == 'qf' then
                 return
             end
             virtbuf_append(bufnr)
@@ -137,7 +142,9 @@ local function setup_virtbuf()
         group=update_virtbuf,
         callback=function ()
             local bufnr = tonumber(vim.fn.expand("<abuf>"))
-            if bufnr == nil then
+            local ft = vim.api.nvim_get_option_value('filetype', {buf=bufnr})
+            -- vim.print(ft)
+            if bufnr == nil or ft == 'qf' then
                 return
             end
             turn_virtbuf_to_available(bufnr)
