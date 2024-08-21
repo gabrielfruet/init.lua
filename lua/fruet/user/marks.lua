@@ -18,6 +18,15 @@ for i = string.byte('A'), string.byte('Z') do
     table.insert(allet, i)
 end
 
+
+local function ischar(char)
+    local byte = string.byte(char)
+    return
+        string.byte('a') <= byte and string.byte('z') >= byte
+        or
+        string.byte('A') <= byte and string.byte('Z') >= byte
+end
+
 ---@class Mark
 ---@field bufnr integer
 ---@field lnum integer
@@ -35,6 +44,23 @@ end
 ---@return integer[]
 function Mark:cursor()
     return {self.lnum, self.cnum}
+end
+
+function Mark:name()
+    return 'Mark ' .. string.byte(self.register)
+end
+
+function Mark:is_global()
+    return self.register:upper() == self.register
+end
+
+function Mark:delete()
+    local args = table.pack(Mark.bufnr, Mark:name())
+    if self:is_global() then
+        vim.api.nvim_buf_del_mark(table.unpack(args))
+    else
+        vim.api.nvim_del_mark(table.unpack(args))
+    end
 end
 
 local function define_az_marks()
@@ -132,28 +158,38 @@ local function show_local_marks()
     vim.cmd[[lopen]]
 end
 
-local function show_local_marks2()
-    local bufnr = vim.api.nvim_get_current_buf()
-    local winnr = vim.api.nvim_get_current_win()
-    local marks_by_mark = M.localmarks[bufnr]
-    local marks = {}
-    for _, mark in pairs(marks_by_mark) do
-        table.insert(marks, mark)
+---@param bufnr integer buffer of the floating window
+---@param winnr integer window of the floating window
+---@param marks Mark[] ordered marks
+local function show_local_marks_set_keymaps(bufnr, winnr, marks)
+    local set_opts = { noremap = true, silent = true, buffer=bufnr}
+    vim.keymap.set('n', 'q', function()
+        vim.api.nvim_buf_delete(bufnr, {})
+    end, set_opts)
+
+    ---@type table<string, integer>
+    local marks_float_idx_by_char = {}
+
+    for i, mark in ipairs(marks) do
+        marks_float_idx_by_char[mark.register] = i
     end
 
-    table.sort(marks, function (a,b)
-        return a.lnum < b.lnum
-    end)
-
-    local n = 0
-    for _, mark in pairs(marks) do if mark ~= nil then n = n + 1 end end
-    if n == 0 then
-        vim.api.nvim_err_write('No available marks for this buffer')
-        return
+    local function handle_mark(char)
+        local line = marks_float_idx_by_char[char]
+        vim.api.nvim_win_set_cursor(winnr, {line,0})
     end
 
-    local list = {}
+    _G.my_marks = {}
 
+    function _G.my_marks.capture_mark()
+        local char = vim.fn.getcharstr()
+        if ischar(char) then handle_mark(char) end
+    end
+
+    vim.keymap.set('n', "'", [[:lua _G.my_marks.capture_mark()<CR>]], set_opts)
+end
+
+local function show_local_marks_open_window(winnr)
     local win_width = vim.api.nvim_win_get_width(0)
     local win_height = vim.api.nvim_win_get_height(0)
 
@@ -175,57 +211,61 @@ local function show_local_marks2()
     }
 
     local float_bufnr = vim.api.nvim_create_buf(false, true)
-    local augroup = vim.api.nvim_create_augroup('ShowLocalMarks', {clear=true})
-
-    vim.keymap.set('n', 'q', function()
-        vim.api.nvim_buf_delete(float_bufnr, {})
-    end, { noremap = true, silent = true, buffer=float_bufnr})
 
     local winhan = vim.api.nvim_open_win(float_bufnr, true, winopts)
+    return float_bufnr, winhan
+end
+
+local function show_local_marks2()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local winnr = vim.api.nvim_get_current_win()
+    local marks_by_mark = M.localmarks[bufnr]
+    local marks = {}
+    for _, mark in pairs(marks_by_mark) do
+        table.insert(marks, mark)
+    end
+
+    table.sort(marks, function (a,b)
+        return a.lnum < b.lnum
+    end)
+
+    local n = 0
+    for _, mark in pairs(marks) do if mark ~= nil then n = n + 1 end end
+    if n == 0 then
+        vim.api.nvim_err_write('No available marks for this buffer')
+        vim.print('No available marks for this buffer')
+        return
+    end
+
+    local float_bufnr, winhan = show_local_marks_open_window(winnr)
+
+    local augroup = vim.api.nvim_create_augroup('ShowLocalMarks', {clear=true})
 
     vim.api.nvim_set_option_value('bufhidden', "delete", {buf=float_bufnr})
     vim.api.nvim_set_option_value('wrap',false, {win=winhan})
-
-    ---@type table<string, integer>
-    local marks_float_idx_by_char = {}
-
-    for i, mark in ipairs(marks) do
-        marks_float_idx_by_char[mark.register] = i
-    end
-
-    local function handle_mark(char)
-        local line = marks_float_idx_by_char[char]
-        vim.api.nvim_win_set_cursor(winhan, {line,0})
-    end
-
-    vim.api.nvim_set_keymap('n', "'", [[:lua _G.my_marks.capture_mark()<CR>]], { noremap = true, silent = true })
-
-    _G.my_marks = {}
-
-    function _G.my_marks.capture_mark()
-        local char = vim.fn.getcharstr()
-        handle_mark(char)
-    end
-
 
     local ns_id = vim.api.nvim_create_namespace("mark_selected_highlight")
 
     ---@type Mark[]
     local line_mark_map = {}
+    local line_count = vim.api.nvim_buf_line_count(bufnr)
 
     for _, mark in pairs(marks) do
-        -- i think this is 0-indexing
-        local content = vim.api.nvim_buf_get_lines(bufnr, mark.lnum-1, mark.lnum, true)[1]
-        local extmarks = vim.api.nvim_buf_get_extmarks(bufnr, -1, {mark.lnum-1,0},{mark.lnum-1,-1}, {overlap=true, details=true, type="highlight"})
+        -- this has to be done because marks can 'fall' if some line got deleted
+        local lnum = math.min(mark.lnum, line_count)
+        local content = vim.api.nvim_buf_get_lines(bufnr, lnum-1, lnum, false)[1]
         local i = #line_mark_map
         local placehold_mark_text = '\'' .. mark.register .. ' | '
         local pad = #placehold_mark_text
+
         vim.api.nvim_buf_set_lines(float_bufnr, i, i+1, false, {placehold_mark_text .. content})
         vim.api.nvim_buf_add_highlight(float_bufnr, ns_id, '@text.warning', i, 1, 2)
+
         for _, hldetails in pairs(hlutils.buf_get_ts_highlights(bufnr, mark.lnum)) do
             local start_col, end_col, hl_group = table.unpack(hldetails)
             vim.api.nvim_buf_add_highlight(float_bufnr, ns_id, hl_group, i, start_col+pad, end_col+pad)
         end
+
         table.insert(line_mark_map, mark)
     end
 
@@ -256,6 +296,7 @@ local function show_local_marks2()
     })
 
     vim.api.nvim_set_option_value('modifiable',false, {buf=float_bufnr})
+    show_local_marks_set_keymaps(float_bufnr, winnr, marks)
 end
 
 function M.run()
@@ -277,7 +318,6 @@ function M.run()
     })
     vim.api.nvim_create_user_command("ShowLocalMarks", show_local_marks2, {})
     vim.keymap.set('n', 'm?', show_local_marks2, {})
-
 end
 
 return M

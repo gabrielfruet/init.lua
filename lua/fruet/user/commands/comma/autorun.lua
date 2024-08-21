@@ -5,6 +5,7 @@ local lang_command = {
     python = function(fname) return ('python ' .. fname) end;
 }
 
+
 local commands = {
     rust={
         filetype='rust',
@@ -87,6 +88,30 @@ local commands = {
             return makecmd
         end
     },
+    lua={
+        filetype='lua',
+        callback=function ()
+            local fname = vim.fn.expand('%')
+            return {
+                {
+                    string.format('luacheck %s --globals vim', fname),
+                    text_render='Luacheck: lint current file',
+                    output={
+                        'quickfix'
+                    }
+
+                },
+                {
+                    string.format('luacheck %s --globals vim', fname),
+                    text_render='Luacheck: lint all files',
+                    output={
+                        'quickfix'
+                    }
+
+                }
+            }
+        end
+    },
     bash={
         filetype='sh',
         callback=function ()
@@ -101,12 +126,22 @@ local commands = {
     }
 }
 
+local function strip_ansi_codes(str)
+    return str:gsub("\27%[[%d;]*m", "")
+end
+
+local function clean_tty_output(str)
+    str = string.gsub(str, '\r', ' ')
+    str = strip_ansi_codes(str)
+    return str
+end
+
 local function to_quickfix(cmd)
     local lines = {}
     local function output(chan_id, data, name)
         if data then
             for _, chunk in pairs(data) do
-                table.insert(lines, chunk)
+                table.insert(lines, clean_tty_output(chunk))
             end
         end
     end
@@ -120,8 +155,7 @@ local function to_quickfix(cmd)
             })
             vim.cmd'copen'
         end,
-        stdout_buffered = false,
-        --pty=true,
+        pty=true,
     })
 
     --vim.cmd(string.format('cexpr system(\'%s\')', cmd))
@@ -148,7 +182,7 @@ local function buf_on_output(bufnr, winhan)
             -- As substituting it with a empty string just skips the line
             -- We dont explicitly need to use `\n`.
             for i = 1, #data do
-                data[i] = string.gsub(data[i], '\r', ' ')
+                data[i] = clean_tty_output(data[i])
             end
             remove_filtered(data, function(v) return v == "" end)
             vim.api.nvim_buf_set_lines(bufnr, -1, -1, false, data)
@@ -158,11 +192,6 @@ local function buf_on_output(bufnr, winhan)
             end
         end
     end
-end
-
-local function get_colors_from_highlight_group(group_name)
-    local hl_id = vim.api.nvim_get_hl_id_by_name(group_name)
-    return vim.api.nvim_get_hl(hl_id)
 end
 
 local function override_hl(ns_id, src, dst)

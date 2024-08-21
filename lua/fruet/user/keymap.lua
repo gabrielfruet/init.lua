@@ -15,10 +15,10 @@ local function run()
     map('i', 'jk', '<esc>', noremap)
 
     --window mov
-    map('n', '<c-h>', '<c-w>h', noremap)
-    map('n', '<c-j>', '<c-w>j', noremap)
-    map('n', '<c-k>', '<c-w>k', noremap)
-    map('n', '<c-l>', '<c-w>l', noremap)
+    -- map('n', '<c-h>', '<c-w>h', noremap)
+    -- map('n', '<c-j>', '<c-w>j', noremap)
+    -- map('n', '<c-k>', '<c-w>k', noremap)
+    -- map('n', '<c-l>', '<c-w>l', noremap)
 
     --buffer
     map('n', '<f4>', '<cmd>bd<cr>', noremap)
@@ -82,6 +82,15 @@ local function run()
     map('n', '<leader>lj', '<cmd>lnewer<cr>')
     map('n', '<leader>lk', '<cmd>lolder<cr>')
 
+    --correct o<esc>i behavior, identing correctly
+    vim.cmd[[function! IndentWithI()
+        if len(getline('.')) == 0
+            return "\"_cc"
+        else
+            return "i"
+        endif
+    endfunction
+    nnoremap <expr> i IndentWithI()]]
 end
 
 return {

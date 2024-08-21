@@ -2,6 +2,7 @@ return{
     "hrsh7th/nvim-cmp",
     --Don't remove the event line, it breaks cmd completion.
     event={'InsertEnter', 'CmdlineEnter'},
+    enabled=true,
     dependencies = {
         "hrsh7th/cmp-buffer",
         'hrsh7th/cmp-path',
@@ -10,13 +11,7 @@ return{
         'rafamadriz/friendly-snippets',
         'onsails/lspkind-nvim',
         "hrsh7th/cmp-nvim-lsp",
-        --'quangnguyen30192/cmp-nvim-ultisnips',
         'hrsh7th/cmp-nvim-lua',
-        'octaltree/cmp-look',
-        'hrsh7th/cmp-calc',
-        'f3fora/cmp-spell',
-        'hrsh7th/cmp-emoji',
-        'tamago324/cmp-zsh',
         'hrsh7th/cmp-cmdline'
     },
     config = function ()
@@ -75,10 +70,6 @@ return{
             sources = cmp.config.sources({
                 { name = 'nvim_lsp' },
                 { name = 'luasnip' },
-                { name = 'emoji'},
-                { name = 'calc'},
-                { name = 'look'},
-                { name = 'spell' },
                 { name = 'path' },
                 { name = 'buffer' },
             })

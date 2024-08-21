@@ -130,7 +130,7 @@ local function setup_virtbuf()
         callback=function ()
             local bufnr = tonumber(vim.fn.expand("<abuf>"))
             local ft = vim.api.nvim_get_option_value('filetype', {buf=bufnr})
-            -- vim.print(ft)
+            vim.print(ft)
             if bufnr == nil or ft == 'qf' then
                 return
             end
