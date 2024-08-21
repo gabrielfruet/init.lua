@@ -155,7 +155,6 @@ local function to_quickfix(cmd)
             })
             vim.cmd'copen'
         end,
-        pty=true,
     })
 
     --vim.cmd(string.format('cexpr system(\'%s\')', cmd))
