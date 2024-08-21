@@ -68,16 +68,16 @@ local function run()
 
     --quickfix
     map('n', '<leader>co', '<cmd>copen<cr>')
-    map('n', '<leader>cn', '<cmd>cnext<cr>')
-    map('n', '<leader>cp', '<cmd>cprevious<cr>')
+    map('n', '[', '<cmd>cnext<cr>')
+    map('n', ']', '<cmd>cprevious<cr>')
     map('n', '<leader>cc', '<cmd>cclose<cr>')
     map('n', '<leader>cj', '<cmd>cnewer<cr>')
     map('n', '<leader>ck', '<cmd>colder<cr>')
 
     --locationlist
     map('n', '<leader>lo', '<cmd>lopen<cr>')
-    map('n', '<leader>ln', '<cmd>lnext<cr>')
-    map('n', '<leader>lp', '<cmd>lprevious<cr>')
+    map('n', '{', '<cmd>lnext<cr>')
+    map('n', '}', '<cmd>lprevious<cr>')
     map('n', '<leader>lc', '<cmd>lclose<cr>')
     map('n', '<leader>lj', '<cmd>lnewer<cr>')
     map('n', '<leader>lk', '<cmd>lolder<cr>')
