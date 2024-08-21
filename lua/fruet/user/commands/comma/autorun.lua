@@ -57,7 +57,7 @@ local commands = {
                 end
 
                 for line in file:lines() do
-                    local target = line:match("^([%w-_]+):")
+                    local target = line:match("^([%w-_]+):[^=]")
                     if target then
                         table.insert(targets, target)
                     end

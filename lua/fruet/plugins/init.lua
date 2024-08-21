@@ -1,12 +1,6 @@
 return {
     "romgrk/nvim-treesitter-context",
     {
-        "nvim-zh/colorful-winsep.nvim",
-        enabled=false,
-        config = true,
-        event = { "WinLeave" },
-    },
-    {
         'xiyaowong/transparent.nvim',
         config = function ()
             require("transparent").setup({ -- Optional, you don't have to run setup.
@@ -24,16 +18,8 @@ return {
 
     },
     {
-        'chentoast/marks.nvim',
-        -- mouse is flickering
-        enabled=false,
-        config = function ()
-            require'marks'.setup{}
-        end
+        dir="~/dev/lua/seem",
+        opts={},
+        dev=true,
     }
-
-
-    --"nvim-lua/plenary.nvim",
-    --"nvim-treesitter/playground",
-    --"sbdchd/neoformat",
 }
