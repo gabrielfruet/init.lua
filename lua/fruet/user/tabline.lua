@@ -25,9 +25,10 @@ function MyTabLine()
         local bufnrhl
         local tablinehl
         local symbhl
+        local is_selected = bufnr == vim.fn.bufnr('%')
 
         -- Select the highlighting
-        if bufnr == vim.fn.bufnr('%') then
+        if is_selected then
             tablinehl = hl_wrapper('TabLineSel')
             bufnrhl = hl_wrapper('TabLineBufNumSel')
             symbhl = hl_wrapper('TabLineSelSymbol')
