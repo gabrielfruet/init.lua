@@ -43,8 +43,14 @@ function MyTabLine()
         local dispname = vim.fn.fnamemodify(bufname, ':t')
         local extension = vim.fn.fnamemodify(bufname, ':e')
 
+
         if bufname == "" then
             dispname = "[No Name]"
+        end
+
+        if is_selected then
+            -- Just for getting used to use statusline for looking at the file
+            dispname = '*******'
         end
         local unsaved_icon = vim.api.nvim_get_option_value('modified',{buf=bufnr}) and '*' or ''
         local icon = nvim_web_dev_get_icon(dispname, extension, {default=true})
