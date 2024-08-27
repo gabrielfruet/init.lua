@@ -195,6 +195,7 @@ local function tabline_lhs()
         '%{%v:lua._get_mode()%}',
         '%{%v:lua._branch_name()%}',
         '',
+        '%<',
         '%*',
     }
 end

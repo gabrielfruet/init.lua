@@ -44,6 +44,7 @@ return {
             c.bashls.setup{}
             c.texlab.setup{}
             c.gopls.setup{}
+            c.ocamllsp.setup{}
         end
     },
     {

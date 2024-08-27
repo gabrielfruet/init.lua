@@ -21,6 +21,7 @@ vim.opt.scrolloff = 8
 
 -- Give more space for displaying messages.
 vim.opt.cmdheight = 1
+vim.opt.wrap = false
 
 -- Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 -- delays and poor user experience.
@@ -32,6 +33,8 @@ vim.opt.background='dark'
 vim.opt.fillchars = {
     stl = "─"
 }
+vim.cmd[[set rtp^="/home/fruet/.opam/default/share/ocp-indent/vim"]]
+
 
 --vim.cmd[[set -g default-terminal "xterm-256color"]]
 --vim.cmd[[set-option -ga terminal-overrides ",xterm-256color:Tc"]]
