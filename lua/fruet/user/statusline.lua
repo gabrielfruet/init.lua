@@ -247,7 +247,6 @@ local function get_diagnostics()
     local ICONS = false
 
     for _, render_data in ipairs(severity_mapping) do
-        --render_data.count = render_data.count or 0
         if render_data.count > 0 and render_data.enabled then
             table.insert(output, '%#' .. render_data.hl .. '#')
             table.insert(output, render_data.count or 0)
@@ -258,6 +257,10 @@ local function get_diagnostics()
             end
             table.insert(output, '%*')
         end
+    end
+
+    if #output == 0 then
+        table.insert(output, '[CLEAN]')
     end
 
     return table.concat(output)
@@ -338,7 +341,7 @@ local function mystatusline()
         '[%l/%L]',
         ' ',
         '%p%%',
-        ' '
+        ' ',
     })
 end
 
