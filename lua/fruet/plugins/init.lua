@@ -18,6 +18,29 @@ return {
 
     },
     {
+        'MeanderingProgrammer/render-markdown.nvim',
+        opts = {},
+        dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    },
+    {
+        "ray-x/lsp_signature.nvim",
+        event = "VeryLazy",
+        opts = {
+            bind=true,
+            handler_opts = {
+                border = "none"
+            }
+        },
+        config = function(_, opts) require'lsp_signature'.setup(opts) end
+    },
+    {
+        'jpalardy/vim-slime',
+        config =function ()
+            vim.g.slime_target = "tmux"
+            vim.g.slime_bracketed_paste = 1
+        end
+    },
+    {
         dir="~/dev/lua/seem",
         opts={},
         dev=true,

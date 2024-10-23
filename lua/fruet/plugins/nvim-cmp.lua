@@ -43,8 +43,18 @@ return{
                 end,
             },
             window = {
-                completion = cmp.config.window.bordered{border="rounded"},
-                documentation = cmp.config.window.bordered{border="rounded"},
+                -- completion = cmp.config.window.bordered{
+                --     border = "rounded",
+                --     winhighlight = "CursorLine:CmpPmenuSel"
+                -- },
+                documentation = cmp.config.window.bordered{
+                    border="none",
+                    winhighlight = "Normal:CmpPmenuNormal,CursorLine:CmpPmenuSel"
+                },
+                completion = cmp.config.window.bordered({
+                    border="none",
+                    winhighlight = "Normal:CmpPmenuNormal,CursorLine:CmpPmenuSel"
+                })
             },
             mapping = cmp.mapping.preset.insert({
                 ['<C-p>'] = function ()

@@ -204,8 +204,8 @@ local function tabline()
     return table.concat{
         tabline_lhs(),
         '%{%v:lua._mytabline()%}',
-        '%=',
-        '%{%v:lua._cwd()%}'
+        --'%=',
+        --'%{%v:lua._cwd()%}'
 
     }
 end

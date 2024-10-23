@@ -40,12 +40,13 @@ local function run()
     --lsp
     vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
         vim.lsp.handlers.hover, {
-            border = "rounded",
-            title = "doc"
+            border = "none",
+            --title = "doc"
         }
     )
     map('n', 'K', vim.lsp.buf.hover, noremap)
     map('n', 'gd', vim.lsp.buf.definition, noremap)
+    map('n', 'gD', vim.lsp.buf.declaration, noremap)
     map('n', 'gi', vim.lsp.buf.implementation, noremap)
     map('n', '<leader>ca', vim.lsp.buf.code_action, noremap)
     map('n', '<leader>vrr', vim.lsp.buf.references, noremap)
@@ -68,8 +69,8 @@ local function run()
 
     --quickfix
     map('n', '<leader>co', '<cmd>copen<cr>')
-    map('n', '[q', '<cmd>cnext<cr>')
-    map('n', ']q', '<cmd>cprevious<cr>')
+    map('n', '[c', '<cmd>cnext<cr>')
+    map('n', ']c', '<cmd>cprevious<cr>')
     map('n', '<leader>cc', '<cmd>cclose<cr>')
     map('n', '<leader>cj', '<cmd>cnewer<cr>')
     map('n', '<leader>ck', '<cmd>colder<cr>')

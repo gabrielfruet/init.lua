@@ -8,7 +8,8 @@ end
 local function configure_highlights()
     local c = {
         prompt = hlutils.get_highlight_color("Visual").bg,
-        bg = vim.g.background,
+        --bg = vim.g.background,
+        bg = '#3c3836',
         fg = vim.g.foreground,
         bg_dark = vim.g.color1,
         fg_dark = vim.g.color1,
@@ -22,7 +23,7 @@ local function configure_highlights()
     -- Apply highlight configurations
     -- set_highlight('FloatBorder', {bg = "none", fg=c.fg})
     set_highlight('FloatBorder', {bg = "none", fg='#777777'})
-    set_highlight('NormalFloat', {bg = "none", fg=c.fg})
+    set_highlight('NormalFloat', {bg = c.bg, fg=c.fg})
     set_highlight('TreesitterContext', {bg = c.bg_light, fg=c.fg_light})
     local tblsel = hlutils.get_highlight_color('TabLineSel')
     local tbl = hlutils.get_highlight_color('TabLine')
@@ -44,6 +45,13 @@ local function configure_highlights()
     local da = hlutils.get_highlight_color('DiffAdd')
     set_highlight('TelescopeSelection', {bg = da.bg, fg = c.selected})
     set_highlight('CmpItemAbbrMatch', {bg = da.bg, fg = c.selected})
+
+    local fn = hlutils.get_highlight_color('Function')
+    set_highlight('CmpPmenuSel', {bg = fn.fg, fg = '#000000'})
+    set_highlight('CmpPmenuNormal', {bg = c.bg, fg=c.fg})
+
+    set_highlight('RenderMarkdownCode', {bg = c.bg})
+    set_highlight('RenderMarkdownCodeInline', {bg = c.bg})
 
 
     set_highlight('CursorLineNr', {bg = "none", fg=c.fg})

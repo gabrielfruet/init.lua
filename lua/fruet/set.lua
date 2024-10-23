@@ -33,6 +33,7 @@ vim.opt.background='dark'
 vim.opt.fillchars = {
     stl = "─"
 }
+vim.opt.showmode = false
 vim.cmd[[set rtp^="/home/fruet/.opam/default/share/ocp-indent/vim"]]
 
 
