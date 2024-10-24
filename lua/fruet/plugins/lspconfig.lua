@@ -34,11 +34,12 @@ return {
                     }
                 }        })
             --c.rust_analyzer.setup{}
-            c.pyright.setup{
-                exclude= { ".venv" },
-                venvPath= ".",
-                venv= ".venv",
-            }
+            -- c.pyright.setup{
+            --     exclude= { ".venv" },
+            --     venvPath= ".",
+            --     venv= ".venv",
+            -- }
+            c.basedpyright.setup{}
             c.clangd.setup{}
             c.cmake.setup{}
             c.bashls.setup{}

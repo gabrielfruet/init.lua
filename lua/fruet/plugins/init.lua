@@ -35,9 +35,16 @@ return {
     },
     {
         'jpalardy/vim-slime',
+        init = function ()
+            vim.g.slime_no_mappings = 1
+        end,
         config =function ()
             vim.g.slime_target = "tmux"
             vim.g.slime_bracketed_paste = 1
+            vim.cmd[[xmap <leader>ss <Plug>SlimeRegionSend]]
+
+            vim.cmd[[nmap <leader>ss <Plug>SlimeParagraphSend]]
+            vim.cmd[[nmap <leader>sl <CMD>SlimeSend<CR>]]
         end
     },
     {
