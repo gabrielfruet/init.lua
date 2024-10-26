@@ -22,8 +22,8 @@ local function configure_highlights()
 
     -- Apply highlight configurations
     -- set_highlight('FloatBorder', {bg = "none", fg=c.fg})
-    set_highlight('FloatBorder', {bg = "none", fg='#777777'})
-    set_highlight('NormalFloat', {bg = c.bg, fg=c.fg})
+    set_highlight('FloatBorder', {bg = "none", fg=c.fg})
+    set_highlight('NormalFloat', {bg = "none", fg=c.fg})
     set_highlight('TreesitterContext', {bg = c.bg_light, fg=c.fg_light})
     local tblsel = hlutils.get_highlight_color('TabLineSel')
     local tbl = hlutils.get_highlight_color('TabLine')
@@ -38,20 +38,30 @@ local function configure_highlights()
     set_highlight('TabLineSelSymbol', {bg="none", fg=tblsel.bg})
     set_highlight('TabLineSymbol', {bg="none", fg="none"})
 
-    set_highlight('CmpItemMenu', {bg = c.bg, fg = c.fg})
+    set_highlight('CmpItemMenu', {bg = "none", fg = c.fg})
     set_highlight('BufferLineFill', {bg = c.bg, fg = c.fg})
     set_highlight('Pmenu', {bg = c.bg, fg = c.fg})
 
     local da = hlutils.get_highlight_color('DiffAdd')
     set_highlight('TelescopeSelection', {bg = da.bg, fg = c.selected})
-    set_highlight('CmpItemAbbrMatch', {bg = da.bg, fg = c.selected})
 
     local fn = hlutils.get_highlight_color('Function')
     set_highlight('CmpPmenuSel', {bg = fn.fg, fg = '#000000'})
-    set_highlight('CmpPmenuNormal', {bg = c.bg, fg=c.fg})
+    set_highlight('CmpPmenuNormal', {bg = 'none', fg=c.fg})
+    local cms = hlutils.get_highlight_color('CocMenuSel')
+    set_highlight('CmpItemAbbrMatch', {bg = "none", fg = cms.bg})
 
     set_highlight('RenderMarkdownCode', {bg = c.bg})
     set_highlight('RenderMarkdownCodeInline', {bg = c.bg})
+    set_highlight('ColorColumn', {bg="none"})
+
+    local diags = {'Ok', 'Info', 'Warn', 'Error', 'Hint'}
+
+    for _, diag in pairs(diags) do
+        local hl = hlutils.get_highlight_color('Diagnostic' .. diag)
+        hl.bg = "none"
+        set_highlight('DiagnosticSign' .. diag, hl)
+    end
 
 
     set_highlight('CursorLineNr', {bg = "none", fg=c.fg})

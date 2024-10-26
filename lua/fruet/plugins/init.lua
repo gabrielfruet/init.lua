@@ -28,7 +28,8 @@ return {
         opts = {
             bind=true,
             handler_opts = {
-                border = "none"
+                border = "rounded",
+                hint_prefix = "> "
             }
         },
         config = function(_, opts) require'lsp_signature'.setup(opts) end

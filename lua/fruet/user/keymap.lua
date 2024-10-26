@@ -40,8 +40,8 @@ local function run()
     --lsp
     vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
         vim.lsp.handlers.hover, {
-            border = "none",
-            --title = "doc"
+            border = "rounded",
+            title = " 󰈙 Documentation "
         }
     )
     map('n', 'K', vim.lsp.buf.hover, noremap)
