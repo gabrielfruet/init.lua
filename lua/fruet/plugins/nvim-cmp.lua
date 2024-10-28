@@ -39,6 +39,13 @@ return{
             --         -- lua = true
             --     },
             -- })
+            local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+
+            -- Insert () on function
+            cmp.event:on(
+                'confirm_done',
+                cmp_autopairs.on_confirm_done()
+            )
 
             cmp.setup({
                 formatting = {
@@ -52,7 +59,7 @@ return{
 
                         local strings = vim.split(kind.kind, "%s", { trimempty = true })
                         kind.kind = "" .. (strings[1] or "") .. " "
-                        kind.menu = " " .. (strings[2] or "") .. " "
+                        kind.menu = " [" .. (strings[2] or "") .. "] "
 
                         return kind
                     end
@@ -80,14 +87,14 @@ return{
                     -- })
                 },
                 mapping = cmp.mapping.preset.insert({
-                    ['<C-k>'] = function ()
+                    ['<C-p>'] = function ()
                         if cmp.visible() then
                             cmp.select_prev_item()
                         elseif luasnip.jumpable(-1) then
                             luasnip.jump(-1)
                         end
                     end,
-                    ['<C-j>'] = function ()
+                    ['<C-n>'] = function ()
                         if cmp.visible() then
                             cmp.select_next_item()
                         elseif luasnip.jumpable(1) then
@@ -98,7 +105,7 @@ return{
                     ['<C-f>'] = cmp.mapping.scroll_docs(4),
                     ['<C-Space>'] = cmp.mapping.complete(),
                     ['<C-x>'] = cmp.mapping.abort(),
-                    ['<C-y>'] = cmp.mapping.confirm({ select = true, behavior=cmp.ConfirmBehavior.Replace })-- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+                    ['<C-y>'] = cmp.mapping.confirm({ select = true, behavior=cmp.ConfirmBehavior.Replace }),-- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
                 }),
                 sources = cmp.config.sources({
                     { name = 'nvim_lsp' },
@@ -119,7 +126,8 @@ return{
 
             -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
             cmp.setup.cmdline({ '/', '?' }, {
-                mapping = cmp.mapping.preset.cmdline(),
+                mapping = cmp.mapping.preset.cmdline({
+                }),
                 sources = {
                     { name = 'buffer' }
                 }
@@ -130,7 +138,8 @@ return{
             --
             ---[[
             cmp.setup.cmdline(':', {
-                mapping = cmp.mapping.preset.cmdline(),
+                mapping = cmp.mapping.preset.cmdline({
+                }),
                 sources = cmp.config.sources({
                     { name = 'path' }
                 }, {
