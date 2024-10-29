@@ -54,7 +54,7 @@ return {
         end
     },
     {
-        dir="~/dev/lua/seem",
+        dir="~/dev/lua/mint",
         opts={},
         dev=true,
     }
