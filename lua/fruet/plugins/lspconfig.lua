@@ -46,6 +46,7 @@ return {
             c.texlab.setup{}
             c.gopls.setup{}
             c.ocamllsp.setup{}
+            c.julials.setup{}
         end
     },
     {
