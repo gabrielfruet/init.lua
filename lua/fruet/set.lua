@@ -2,6 +2,7 @@ vim.cmd('source ~/.cache/wal/colors-wal.vim')
 
 vim.g.mapleader = " "
 vim.opt.guicursor = ""
+vim.opt.clipboard="unnamedplus"
 
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"

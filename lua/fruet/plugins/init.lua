@@ -54,8 +54,21 @@ return {
         end
     },
     {
-        dir="~/dev/lua/seem",
-        opts={},
+        "zbirenbaum/copilot.lua",
+        event = "InsertEnter",
+        config = function()
+            require("copilot").setup({})
+        end,
+    },
+    {
+        'gabrielfruet/mint.nvim',
+        dir="~/dev/lua/mint",
         dev=true,
+        opts={}
+    },
+    {
+        dir="~/dev/lua/constructor",
+        dev=true,
+        opts={}
     }
 }

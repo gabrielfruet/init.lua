@@ -46,12 +46,18 @@ return {
             c.texlab.setup{}
             c.gopls.setup{}
             c.ocamllsp.setup{}
+            c.julials.setup{}
         end
     },
     {
         'onsails/lspkind-nvim',
         config = function ()
             local lspkind = require('lspkind')
+            lspkind.init{
+                symbol_map={
+                    Copilot = "",
+                }
+            }
         end
     }
 
