@@ -15,7 +15,13 @@ return{
             'onsails/lspkind-nvim',
             "hrsh7th/cmp-nvim-lsp",
             'hrsh7th/cmp-nvim-lua',
-            'hrsh7th/cmp-cmdline'
+            'hrsh7th/cmp-cmdline',
+            {
+                "zbirenbaum/copilot-cmp",
+                config = function ()
+                    require("copilot_cmp").setup()
+                end
+            }
         },
         config = function ()
             local cmp = require'cmp'
@@ -110,6 +116,7 @@ return{
                 sources = cmp.config.sources({
                     { name = 'nvim_lsp' },
                     { name = 'luasnip' }, -- For luasnip users.
+                    { name = 'copilot' },
                 }, {
                         { name = 'buffer' },
                     })

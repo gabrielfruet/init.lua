@@ -14,7 +14,7 @@ return {
         local fzf = require("fzf-lua")
         vim.keymap.set('n', '<C-p>', fzf.files, {noremap=true})
         vim.keymap.set('n', '<C-f>', fzf.builtin, {noremap=true})
+        vim.keymap.set('n', '<C-g>', fzf.live_grep, {noremap=true})
         vim.keymap.set('n', '<leader>lr', fzf.lsp_references, {noremap=true})
-        vim.keymap.set('n', '<leader>gr', fzf.live_grep, {noremap=true})
     end
 }
