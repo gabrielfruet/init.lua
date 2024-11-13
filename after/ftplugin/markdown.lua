@@ -13,15 +13,17 @@ end, {
 
 local hot_reload = false
 
-kset('n', '<leader>hr', function ()
+kset('n', '<leader>re', function ()
     hot_reload = true
+    vim.print("Hot reload enabled")
 end, {
         buffer=buf,
         noremap=true,
     })
 
-kset('n', '<leader>shr', function ()
+kset('n', '<leader>rs', function ()
     hot_reload = true
+    vim.print("Hot reload disabled")
 end, {
         buffer=buf,
         noremap=true,
