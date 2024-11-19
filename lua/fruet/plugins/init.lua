@@ -70,5 +70,16 @@ return {
         dir="~/dev/lua/constructor",
         dev=true,
         opts={}
+    },
+    {
+        dir="~/dev/lua/pandocking",
+        dev=true,
+        opts={
+            default_variables={
+                arguments={
+                    output_format = 'beamer'
+                }
+            }
+        }
     }
 }
