@@ -6,10 +6,9 @@ return{
         enabled=true,
         dependencies = {
             "hrsh7th/cmp-buffer",
-            --'tzachar/cmp-ai',
             'hrsh7th/cmp-path',
             'L3MON4D3/LuaSnip',
-            --'micangl/cmp-vimtex',
+            'micangl/cmp-vimtex',
             'saadparwaiz1/cmp_luasnip',
             'rafamadriz/friendly-snippets',
             'onsails/lspkind-nvim',
@@ -28,23 +27,6 @@ return{
             local lspkind = require('lspkind')
             local luasnip = require('luasnip')
 
-            -- cmp_ai:setup({
-            --     max_lines = 100,
-            --     provider = 'Ollama',
-            --     provider_options = {
-            --         model = 'codellama:7b-code',
-            --     },
-            --     notify = true,
-            --     notify_callback = function(msg)
-            --         vim.notify(msg)
-            --     end,
-            --     run_on_every_keystroke = false,
-            --     ignored_file_types = {
-            --         -- default is not to ignore
-            --         -- uncomment to ignore in lua:
-            --         -- lua = true
-            --     },
-            -- })
             local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 
             -- Insert () on function
@@ -113,13 +95,18 @@ return{
                     ['<C-x>'] = cmp.mapping.abort(),
                     ['<C-y>'] = cmp.mapping.confirm({ select = true, behavior=cmp.ConfirmBehavior.Replace }),-- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
                 }),
-                sources = cmp.config.sources({
-                    { name = 'nvim_lsp' },
-                    { name = 'luasnip' }, -- For luasnip users.
-                    { name = 'copilot' },
-                }, {
+                sources = cmp.config.sources(
+                    {
+                        { name = 'path' },
+                        { name = 'nvim_lsp' },
+                        { name = 'luasnip' }, -- For luasnip users.
                         { name = 'buffer' },
-                    })
+                        { name = 'vimtex' },
+                    },
+                    {
+                        { name = 'copilot' },
+                    }
+                )
             })
 
             -- Set configuration for specific filetype.
