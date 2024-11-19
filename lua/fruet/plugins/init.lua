@@ -77,7 +77,7 @@ return {
         opts={
             default_variables={
                 arguments={
-                    output_format = 'beamer'
+                    output_format = 'latex'
                 }
             }
         }
