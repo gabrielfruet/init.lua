@@ -21,9 +21,18 @@ local function run()
     -- map('n', '<c-l>', '<c-w>l', noremap)
 
     --buffer
-    map('n', '<f4>', '<cmd>bd<cr>', noremap)
-    map('n', '<f2>', '<cmd>bnext<cr>', noremap)
-    map('n', '<f1>', '<cmd>bprevious<cr>', noremap)
+    map('n', '<leader>bc', '<cmd>enew | bdelete #<cr>', noremap)
+    map('n', '<leader>bn', '<cmd>bn<cr>', noremap)
+
+    --for the gmk67 knob
+    map('n', '<f12>', '<cmd>bnext<cr>', noremap)
+    map('n', '<f11>', '<cmd>bprevious<cr>', noremap)
+
+    map('n', '<Right>', '<cmd>bnext<cr>', noremap)
+    map('n', '<Left>', '<cmd>bprevious<cr>', noremap)
+    map('n', '<Down>', '<cmd>bd<cr>', noremap)
+    map('n', '<Up>', '<cmd>bn<cr>', noremap)
+
 
     --wrap
     map('v', [[<leader>"]], [[di""<Esc>P]], noremap)
