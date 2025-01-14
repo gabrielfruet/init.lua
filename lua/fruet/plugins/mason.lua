@@ -19,7 +19,20 @@ return {
             'neovim/nvim-lspconfig',
         },
         opts={
-            ensure_installed = { "lua_ls", "rust_analyzer", "pyright", "clangd", "cmake", "bashls", "texlab"},
+            ensure_installed = {
+                "lua_ls",
+                "rust_analyzer",
+                "clangd",
+                "cmake",
+                "bashls",
+                "texlab",
+                "clangd",
+                "gopls",
+                "bashls",
+                "basedpyright",
+                "dockerls",
+            },
+
         }
     },
     {
@@ -37,7 +50,12 @@ return {
             -- This setting has no relation with the `automatic_installation` setting.
             -- Names of linters should be taken from the mason's registry.
             ---@type string[]
-            ensure_installed = {'shellcheck', 'pylint', 'luacheck'},
+            ensure_installed = {
+                'shellcheck',
+                'pylint',
+                'checkmake',
+                'luacheck',
+            },
 
             -- Whether linters that are set up (via nvim-lint) should be automatically installed if they're not already installed.
             -- It tries to find the specified linters in the mason's registry to proceed with installation.

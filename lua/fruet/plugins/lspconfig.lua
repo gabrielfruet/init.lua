@@ -39,7 +39,13 @@ return {
             --     venvPath= ".",
             --     venv= ".venv",
             -- }
-            c.basedpyright.setup{}
+            c.basedpyright.setup{
+                settings={
+                    basedpyright = {
+                        typeCheckingMode="standard"
+                    }
+                }
+            }
             c.clangd.setup{}
             c.cmake.setup{}
             c.bashls.setup{}
@@ -47,6 +53,7 @@ return {
             c.gopls.setup{}
             c.ocamllsp.setup{}
             c.julials.setup{}
+            c.dockerls.setup{}
         end
     },
     {
