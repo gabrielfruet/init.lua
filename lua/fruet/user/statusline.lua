@@ -295,6 +295,31 @@ function _G._branch_name()
     return branch_name()
 end
 
+local function is_running_in_docker()
+    local docker_env_file = "/.dockerenv"
+    if vim.loop.fs_stat(docker_env_file) then
+        return true
+    end
+    return false
+end
+
+IS_IN_DOCKER=is_running_in_docker()
+
+local function get_docker()
+    if IS_IN_DOCKER then
+        local hl_code = mode_map[vim.api.nvim_get_mode().mode]:sub(1,1)
+        return table.concat {
+            '%#StatusLineMode' .. hl_code:upper() .. '#',
+            '󰡨',
+            ' ',
+            '%#StatusLineMode' .. hl_code:upper() .. 'Symbol#',
+        }
+    end
+    return ""
+end
+
+_G._docker = get_docker
+
 local function get_mode()
     local hl_code = mode_map[vim.api.nvim_get_mode().mode]:sub(1,1)
     --get_diagnostics()

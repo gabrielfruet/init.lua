@@ -188,11 +188,14 @@ local function current_working_directory()
     }
 end
 
+
 _G._cwd = current_working_directory
+
 
 local function tabline_lhs()
     return table.concat{
         '%{%v:lua._get_mode()%}',
+        '%{%v:lua._docker()%}',
         '%{%v:lua._branch_name()%}',
         '',
         '%<',
@@ -211,6 +214,7 @@ local function tabline()
 end
 
 _G._tabline = tabline
+
 
 local function setup_tabline()
     vim.opt.showtabline = 2
