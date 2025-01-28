@@ -11,12 +11,13 @@ return {
             lua={'luacheck'},
             bash={'shellcheck'},
             shell={'shellcheck'},
-            makefile={'checkmake'},
+            make={'checkmake'},
         }
         local linaugroup = vim.api.nvim_create_augroup("Linting", {clear = true})
         vim.api.nvim_create_autocmd({ "BufWritePost" , "BufEnter", "InsertLeave"}, {
             group = linaugroup,
             callback = function()
+                print('linting')
                 nvim_lint.try_lint()
             end,
         })

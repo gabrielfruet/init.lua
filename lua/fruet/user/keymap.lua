@@ -64,7 +64,7 @@ local function run()
     --map('n', '<leader>ws', vim.lsp.buf.workspace_symbol)
 
     --diagnostic
-    map('n', '<leader>d', vim.diagnostic.open_float, noremap)
+    map('n', '<leader>dv', vim.diagnostic.open_float, noremap)
     map('n', '<leader>dq', vim.diagnostic.setloclist, noremap)
 
     --swapnig lines
