@@ -1,3 +1,8 @@
+local function exists(name)
+    local f=io.open(name,"r")
+    if f~=nil then io.close(f) return true else return false end
+end
+
 return {
     "romgrk/nvim-treesitter-context",
     {
@@ -25,6 +30,7 @@ return {
     {
         "ray-x/lsp_signature.nvim",
         event = "VeryLazy",
+        enabled=false,
         config = function()
             require'lsp_signature'.setup {
             bind=true,
@@ -69,17 +75,7 @@ return {
     {
         dir="~/dev/lua/constructor",
         dev=true,
+        enabled=exists("~/dev/lua/constructor"),
         opts={}
-    },
-    {
-        dir="~/dev/lua/pandocking",
-        dev=true,
-        opts={
-            default_variables={
-                arguments={
-                    output_format = 'latex'
-                }
-            }
-        }
     }
 }
