@@ -17,7 +17,6 @@ return {
         vim.api.nvim_create_autocmd({ "BufWritePost" , "BufEnter", "InsertLeave"}, {
             group = linaugroup,
             callback = function()
-                print('linting')
                 nvim_lint.try_lint()
             end,
         })
