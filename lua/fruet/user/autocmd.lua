@@ -15,7 +15,9 @@ local function run()
 
     local function switch_to_buffer(virtbuf)
         -- Check if the buffer exists
-        local bufnr = _G.virtbuf_to_buf_map[virtbuf]
+        local buffers = _G._sorted_buffers()
+        vim.print(buffers)
+        local bufnr = buffers[virtbuf]
         if bufnr == nil then return end
         if vim.fn.bufexists(bufnr) == 1 then
             vim.api.nvim_set_current_buf(bufnr)

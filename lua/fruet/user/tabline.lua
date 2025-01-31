@@ -16,12 +16,59 @@ local function hl_wrapper(hl)
     end
 end
 
+--- FRECENCY
+local frecency = {}
+
+
+local function update_frecency(bufnr)
+    if not frecency[bufnr] then
+        frecency[bufnr] = {
+            recentness = 1.0,  -- Starts at max, decays over time
+            frequency = 1,     -- Starts at 1, increases per use
+            initial_bonus = 2.0 -- A boost for new buffers, but it decays
+        }
+    else
+        local buf = frecency[bufnr]
+        buf.recentness = buf.recentness * 0.9 + 1  -- Recentness update (decay + boost)
+        buf.frequency = buf.frequency + 1          -- Usage count
+        buf.initial_bonus = buf.initial_bonus * 0.8 -- Decay initial bonus gradually
+    end
+end
+
+vim.api.nvim_create_autocmd("BufEnter", {
+    callback = function()
+        local bufnr = vim.api.nvim_get_current_buf()
+        update_frecency(bufnr)
+        vim.cmd[[redrawtabline]]
+    end
+})
+
+local function calculate_score(bufnr)
+    local buf = frecency[bufnr]
+    if not buf then return -math.huge end -- Lowest priority for unknown buffers
+
+    local W1, W2, W3 = 3.0, 1.0, 0.5  -- Weights for tuning
+    return W1 * buf.recentness + W2 * math.sqrt(buf.frequency) + W3 * buf.initial_bonus
+end
+
+local function sorted_buffers()
+    local buffers = vim.api.nvim_list_bufs()
+    table.sort(buffers, function(a, b)
+        return calculate_score(a) > calculate_score(b)
+    end)
+    return buffers
+end
+
+_G._sorted_buffers = sorted_buffers
+
+---- FRECENCY END
+
 function MyTabLine()
     local s = ""
-    local buffers = vim.fn.getbufinfo({buflisted = 1}) -- Get all listed buffers
+    local buffers = sorted_buffers()
 
-    for _, buf in ipairs(buffers) do
-        local bufnr = buf.bufnr
+    for i, buf in ipairs(buffers) do
+        local bufnr = buf
         local bufnrhl
         local tablinehl
         local symbhl
@@ -39,7 +86,7 @@ function MyTabLine()
         end
 
         local bufname = vim.fn.bufname(bufnr)
-        local virtbuf = buf_to_virtbuf_map[bufnr] or '?'
+        local virtbuf = i or '?'
         local dispname = vim.fn.fnamemodify(bufname, ':t')
         local extension = vim.fn.fnamemodify(bufname, ':e')
 
@@ -48,10 +95,6 @@ function MyTabLine()
             dispname = "[No Name]"
         end
 
-        if is_selected then
-            -- Just for getting used to use statusline for looking at the file
-            dispname = '*******'
-        end
         local unsaved_icon = vim.api.nvim_get_option_value('modified',{buf=bufnr}) and '*' or ''
         local icon = nvim_web_dev_get_icon(dispname, extension, {default=true})
         local symbr = ''
