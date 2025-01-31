@@ -20,6 +20,7 @@ end
 local frecency = {}
 
 
+
 local function update_frecency(bufnr)
     if not frecency[bufnr] then
         frecency[bufnr] = {
@@ -35,13 +36,6 @@ local function update_frecency(bufnr)
     end
 end
 
-vim.api.nvim_create_autocmd("BufEnter", {
-    callback = function()
-        local bufnr = vim.api.nvim_get_current_buf()
-        update_frecency(bufnr)
-        vim.cmd[[redrawtabline]]
-    end
-})
 
 local function calculate_score(bufnr)
     local buf = frecency[bufnr]
@@ -57,6 +51,16 @@ local function sorted_buffers()
         return calculate_score(a) > calculate_score(b)
     end)
     return buffers
+end
+
+local function setup_frecency()
+    vim.api.nvim_create_autocmd("BufEnter", {
+        callback = function()
+            local bufnr = vim.api.nvim_get_current_buf()
+            update_frecency(bufnr)
+            vim.cmd[[redrawtabline]]
+        end
+    })
 end
 
 _G._sorted_buffers = sorted_buffers
@@ -274,6 +278,7 @@ function M.run()
     set_hls()
     setup_tabline()
     setup_virtbuf()
+    setup_frecency()
 end
 
 return M
