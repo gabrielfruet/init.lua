@@ -13,11 +13,11 @@ local function run()
         end
     })
 
-    local function switch_to_buffer(virtbuf)
+    local function switch_to_buffer(bufrank)
         -- Check if the buffer exists
         local buffers = _G._sorted_buffers()
         vim.print(buffers)
-        local bufnr = buffers[virtbuf]
+        local bufnr = buffers[bufrank]
         if bufnr == nil then return end
         if vim.fn.bufexists(bufnr) == 1 then
             vim.api.nvim_set_current_buf(bufnr)

@@ -2,11 +2,6 @@ local M = {}
 
 -- #TODO change the 'widgets' code to a separate file
 
-local buf_to_virtbuf_map = {}
-local virtbuf_to_buf_map = {}
-
-_G.virtbuf_to_buf_map = virtbuf_to_buf_map
-
 local stline = require('fruet.user.statusline')
 local nvim_web_dev_get_icon = require'nvim-web-devicons'.get_icon
 
@@ -18,8 +13,6 @@ end
 
 --- FRECENCY
 local frecency = {}
-
-
 
 local function update_frecency(bufnr)
     if not frecency[bufnr] then
@@ -90,7 +83,7 @@ function MyTabLine()
         end
 
         local bufname = vim.fn.bufname(bufnr)
-        local virtbuf = i or '?'
+        local buf_rank = i or '?'
         local dispname = vim.fn.fnamemodify(bufname, ':t')
         local extension = vim.fn.fnamemodify(bufname, ':e')
 
@@ -103,7 +96,7 @@ function MyTabLine()
         local icon = nvim_web_dev_get_icon(dispname, extension, {default=true})
         local symbr = ''
         local symbl = ''
-        s = string.format("%s%s %s %s %%*", s,  bufnrhl(' ' .. virtbuf .. unsaved_icon), tablinehl(icon), tablinehl(dispname))
+        s = string.format("%s%s %s %s %%*", s,  bufnrhl(' ' .. buf_rank .. unsaved_icon), tablinehl(icon), tablinehl(dispname))
     end
 
     -- After the last buffer, fill with TabLineFill
@@ -128,94 +121,6 @@ local function set_hls()
     vim.api.nvim_set_hl(0, 'TabLineBufNumSel', { bg = colors_tblsel.bg, fg = base_fg, bold=true, italic=true})
     vim.api.nvim_set_hl(0, 'TabLineBufNum', { fg = base_fg, bg = "none", bold=true})
     vim.api.nvim_set_hl(0, 'TabLineCwd', { bg = "none", fg = colors_kw.fg, italic=true})
-
-end
-
-local function table_size(table)
-    local n = 0
-    for k, v in pairs(table) do
-        n = n + 1
-    end
-    return n
-end
-
-
-local function setup_virtbuf()
-    -- #TODO refactor virtbuffer tables to a single table that has methods in it
-    local update_virtbuf = vim.api.nvim_create_augroup('update_virtbuf', {clear=true})
-    local virtbuf_availables = {}
-    local function virtbuf_append(bufnr)
-        if buf_to_virtbuf_map[bufnr] ~= nil then
-            return
-        end
-        local idx = table_size(buf_to_virtbuf_map) + table_size(virtbuf_availables) + 1
-        local i_idx = -1
-
-        for i,avail_idx in ipairs(virtbuf_availables) do
-            if avail_idx < idx then
-                idx = avail_idx
-                i_idx = i
-            end
-        end
-
-        if i_idx ~= -1 then
-            table.remove(virtbuf_availables, i_idx)
-        end
-
-        buf_to_virtbuf_map[bufnr] = idx
-        virtbuf_to_buf_map[idx] = bufnr
-
-    end
-
-    local function turn_virtbuf_to_available(bufnr)
-        local virtbufnr = buf_to_virtbuf_map[bufnr]
-        if virtbufnr == nil then
-            return
-        end
-        table.insert(virtbuf_availables, virtbufnr)
-
-        buf_to_virtbuf_map[bufnr] = nil
-        virtbuf_to_buf_map[virtbufnr] = nil
-
-    end
-
-    vim.api.nvim_create_autocmd('BufAdd', {
-        group=update_virtbuf,
-        callback=function ()
-            local bufnr = tonumber(vim.fn.expand("<abuf>"))
-            local ft = vim.api.nvim_get_option_value('filetype', {buf=bufnr})
-            vim.print(ft)
-            if bufnr == nil or ft == 'qf' then
-                return
-            end
-            virtbuf_append(bufnr)
-        end
-    })
-
-    vim.api.nvim_create_autocmd('BufDelete', {
-        group=update_virtbuf,
-        callback=function ()
-            local bufnr = tonumber(vim.fn.expand("<abuf>"))
-            local ft = vim.api.nvim_get_option_value('filetype', {buf=bufnr})
-            -- vim.print(ft)
-            if bufnr == nil or ft == 'qf' then
-                return
-            end
-            turn_virtbuf_to_available(bufnr)
-        end
-    })
-
-    vim.api.nvim_create_autocmd('VimEnter', {
-        group=update_virtbuf,
-        callback=function ()
-            local bufnrlist = vim.fn.getbufinfo({buflisted=1})
-
-            for _, buf in ipairs(bufnrlist) do
-                local bufnr = buf.bufnr
-                virtbuf_append(bufnr)
-            end
-        end
-    })
 
 end
 
@@ -277,7 +182,6 @@ end
 function M.run()
     set_hls()
     setup_tabline()
-    setup_virtbuf()
     setup_frecency()
 end
 
