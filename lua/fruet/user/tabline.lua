@@ -60,7 +60,7 @@ _G._sorted_buffers = sorted_buffers
 
 ---- FRECENCY END
 
-function MyTabLine()
+local function my_tab_line()
     local s = ""
     local buffers = sorted_buffers()
 
@@ -87,8 +87,9 @@ function MyTabLine()
         local dispname = vim.fn.fnamemodify(bufname, ':t')
         local extension = vim.fn.fnamemodify(bufname, ':e')
 
+        local is_oil = bufname:find("oil:/") ~= nil
 
-        if bufname == "" then
+        if bufname == "" or is_oil then
             dispname = "[No Name]"
         end
 
@@ -110,7 +111,7 @@ function MyTabLine()
     return s
 end
 
-_G._mytabline = MyTabLine
+_G._mytabline = my_tab_line
 
 local hlutils = require('fruet.utils.hl')
 
