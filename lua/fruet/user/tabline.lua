@@ -14,18 +14,58 @@ end
 --- FRECENCY
 local frecency = {}
 
+local function is_useful_buffer(bufnr)
+    -- Get buffer info
+    local buftype = vim.bo[bufnr].buftype
+    local bufname = vim.api.nvim_buf_get_name(bufnr)
+    local listed = vim.bo[bufnr].buflisted
+    local win_config = vim.api.nvim_win_get_config(0)
+
+    -- Exclude quickfix (name-based check)
+    if bufname:match("^quickfix%-%d+$") then
+        return false
+    end
+
+    -- Ignore floating windows (fixes nvim-cmp popups)
+    if win_config.relative ~= "" then
+        return false
+    end
+
+    -- Allow only listed buffers (ignores scratch and temp buffers)
+    if not listed then
+        return false
+    end
+
+    -- Ignore empty unnamed buffers
+    if bufname == "" then
+        return false
+    end
+
+    -- Allow only normal files and user-created buffers
+    return buftype == "" or buftype == "nofile"
+end
+
 local function update_frecency(bufnr)
+    if not frecency[bufnr] then
+        return
+    end
+    local buf = frecency[bufnr]
+    buf.recentness = buf.recentness * 0.9 + 1  -- Recentness update (decay + boost)
+    buf.frequency = buf.frequency + 1          -- Usage count
+    buf.initial_bonus = buf.initial_bonus * 0.8 -- Decay initial bonus gradually
+end
+
+local function add_frecency_buffer(bufnr)
+    if not is_useful_buffer(bufnr) then
+        return -- Ignore unwanted buffers
+    end
+
     if not frecency[bufnr] then
         frecency[bufnr] = {
             recentness = 1.0,  -- Starts at max, decays over time
             frequency = 1,     -- Starts at 1, increases per use
             initial_bonus = 2.0 -- A boost for new buffers, but it decays
         }
-    else
-        local buf = frecency[bufnr]
-        buf.recentness = buf.recentness * 0.9 + 1  -- Recentness update (decay + boost)
-        buf.frequency = buf.frequency + 1          -- Usage count
-        buf.initial_bonus = buf.initial_bonus * 0.8 -- Decay initial bonus gradually
     end
 end
 
@@ -39,14 +79,27 @@ local function calculate_score(bufnr)
 end
 
 local function sorted_buffers()
-    local buffers = vim.api.nvim_list_bufs()
-    table.sort(buffers, function(a, b)
+    local buffers = vim.fn.getbufinfo({buflisted=true})
+    local bufnrs = {}
+
+    for _, bufhan in pairs(buffers) do
+        table.insert(bufnrs, bufhan.bufnr)
+    end
+
+    table.sort(bufnrs, function(a, b)
         return calculate_score(a) > calculate_score(b)
     end)
-    return buffers
+    return bufnrs
 end
 
 local function setup_frecency()
+    vim.api.nvim_create_autocmd("BufAdd", {
+        callback = function ()
+            local bufnr = vim.api.nvim_get_current_buf()
+            add_frecency_buffer(bufnr)
+            vim.cmd[[redrawtabline]]
+        end
+    })
     vim.api.nvim_create_autocmd("BufEnter", {
         callback = function()
             local bufnr = vim.api.nvim_get_current_buf()
@@ -87,9 +140,7 @@ local function my_tab_line()
         local dispname = vim.fn.fnamemodify(bufname, ':t')
         local extension = vim.fn.fnamemodify(bufname, ':e')
 
-        local is_oil = bufname:find("oil:/") ~= nil
-
-        if bufname == "" or is_oil then
+        if dispname == "" then
             dispname = "[No Name]"
         end
 
@@ -129,7 +180,7 @@ local function current_working_directory()
     local cwd = vim.fn.getcwd()
     local home = vim.fn.expand('~')
 
-    if string.find(cwd, home, 1, true) == 1 then 
+    if string.find(cwd, home, 1, true) == 1 then
       cwd = '~' .. string.sub(cwd, #home + 1)
     end
 
@@ -141,8 +192,38 @@ local function current_working_directory()
     }
 end
 
+local function tabs_widget()
+    local s = " "
+    local tabs = vim.api.nvim_list_tabpages()
+    local ctabnr = vim.api.nvim_get_current_tabpage()
+
+    if #tabs == 1 then
+        return ""
+    end
+
+    for i, tabnr in ipairs(tabs) do
+        local is_selected = tabnr == ctabnr
+        local tabnrhl
+        local symbhl
+
+        -- Select the highlighting
+        if is_selected then
+            tabnrhl = hl_wrapper('TabLineTabSel')
+            symbhl = hl_wrapper('TabLineTabSymbolSel')
+        else
+            tabnrhl = hl_wrapper('TabLineBufNum')
+            symbhl = hl_wrapper('TabLineBufNUm')
+        end
+
+
+        s = string.format("%s %s %%*", s,  tabnrhl(tabnr))
+    end
+    return s
+end
+
 
 _G._cwd = current_working_directory
+_G._tabs = tabs_widget
 
 
 local function tabline_lhs()
@@ -152,6 +233,7 @@ local function tabline_lhs()
         '%{%v:lua._branch_name()%}',
         '',
         '%<',
+        '%{%v:lua._tabs()%}',
         '%*',
     }
 end

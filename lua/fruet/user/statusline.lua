@@ -62,6 +62,19 @@ local function set_hls()
     vim.api.nvim_set_hl(0, 'StatusLineInfoNC', { bg = "none", fg = vim.g.color8 })
     vim.api.nvim_set_hl(0, 'StatusLineInfoSymbolNC', { fg = vim.g.color8, bg = 'none' })
 
+    vim.api.nvim_set_hl(0, 'TabLineTabSel', {
+        fg = '#458588',
+        bg = "none"
+    })
+    -- vim.api.nvim_set_hl(0, 'TabLineTabSel', {
+    --     bg = '#458588',  -- Gruvbox Blue
+    --     fg = '#ebdbb2',   -- Gruvbox Light0
+    -- })
+    vim.api.nvim_set_hl(0, 'TabLineTabSymbolSel', {
+        bg = 'none',   -- Gruvbox Light0
+        fg = '#458588',  -- Gruvbox Blue
+    })
+
     --NORMAL DEFINITIONS
 
     vim.api.nvim_set_hl(0, 'StatusLineModeN', {
