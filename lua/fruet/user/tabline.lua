@@ -93,12 +93,10 @@ local function calculate_score(bufnr)
         W2 * math.sqrt(buf.frequency) +
         W3 * buf.initial_bonus +
         W4 * buf.edit_frequency
-    vim.print(vim.api.nvim_buf_get_name(bufnr), score)
     return score
 end
 
 local function sorted_buffers()
-    vim.print('CALCULATING SCORES')
     local buffers = vim.fn.getbufinfo({buflisted=true})
     local bufnrs = {}
 
