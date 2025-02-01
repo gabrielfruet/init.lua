@@ -12,6 +12,13 @@ local function hl_wrapper(hl)
 end
 
 --- FRECENCY
+--- @class FrecencyBuffer
+--- @field recentness number
+--- @field frequency number
+--- @field edit_frequency number
+--- @field initial_bonus number
+---
+--- @type table<integer, FrecencyBuffer>
 local frecency = {}
 
 local function is_useful_buffer(bufnr)
@@ -45,7 +52,8 @@ local function is_useful_buffer(bufnr)
     return buftype == "" or buftype == "nofile"
 end
 
-local function update_frecency(bufnr)
+local function update_frecency(bufnr, edit)
+    edit = edit and 0 or 1
     if not frecency[bufnr] then
         return
     end
@@ -53,6 +61,7 @@ local function update_frecency(bufnr)
     buf.recentness = buf.recentness * 0.9 + 1  -- Recentness update (decay + boost)
     buf.frequency = buf.frequency + 1          -- Usage count
     buf.initial_bonus = buf.initial_bonus * 0.8 -- Decay initial bonus gradually
+    buf.edit_frequency = buf.edit_frequency * 0.9 + edit
 end
 
 local function add_frecency_buffer(bufnr)
@@ -64,7 +73,8 @@ local function add_frecency_buffer(bufnr)
         frecency[bufnr] = {
             recentness = 1.0,  -- Starts at max, decays over time
             frequency = 1,     -- Starts at 1, increases per use
-            initial_bonus = 2.0 -- A boost for new buffers, but it decays
+            initial_bonus = 2.0, -- A boost for new buffers, but it decays
+            edit_frequency = 1,
         }
     end
 end
@@ -74,8 +84,11 @@ local function calculate_score(bufnr)
     local buf = frecency[bufnr]
     if not buf then return -math.huge end -- Lowest priority for unknown buffers
 
-    local W1, W2, W3 = 3.0, 1.0, 0.5  -- Weights for tuning
-    return W1 * buf.recentness + W2 * math.sqrt(buf.frequency) + W3 * buf.initial_bonus
+    local W1, W2, W3, W4 = 3.0, 1.0, 0.5, 2.0  -- Weights for tuning
+    return W1 * buf.recentness +
+        W2 * math.sqrt(buf.frequency) +
+        W3 * buf.initial_bonus +
+        W4 * buf.edit_frequency
 end
 
 local function sorted_buffers()
@@ -93,6 +106,13 @@ local function sorted_buffers()
 end
 
 local function setup_frecency()
+    vim.api.nvim_create_autocmd("BufAdd", {
+        callback = function ()
+            local bufnr = vim.api.nvim_get_current_buf()
+            add_frecency_buffer(bufnr)
+            vim.cmd[[redrawtabline]]
+        end
+    })
     vim.api.nvim_create_autocmd("BufAdd", {
         callback = function ()
             local bufnr = vim.api.nvim_get_current_buf()
