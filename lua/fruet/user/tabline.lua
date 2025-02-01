@@ -57,18 +57,22 @@ local function update_frecency(bufnr, edit)
     if not frecency[bufnr] then
         return
     end
-    local buf = frecency[bufnr]
-    buf.recentness = buf.recentness * 0.9 + 1  -- Recentness update (decay + boost)
-    buf.frequency = buf.frequency + 1          -- Usage count
-    buf.initial_bonus = buf.initial_bonus * 0.8 -- Decay initial bonus gradually
-    buf.edit_frequency = buf.edit_frequency * 0.9 + edit
+    for ibufnr, buf in pairs(frecency) do
+        if ibufnr == bufnr then
+            buf.recentness = buf.recentness * 0.9 + 1  -- Recentness update (decay + boost)
+            buf.frequency = buf.frequency * 0.9+ 1          -- Usage count
+            buf.initial_bonus = buf.initial_bonus * 0.8 -- Decay initial bonus gradually
+            buf.edit_frequency = buf.edit_frequency * 0.9 + edit
+        else
+            buf.recentness = buf.recentness * 0.9  -- Recentness update (decay + boost)
+            buf.frequency = buf.frequency * 0.9          -- Usage count
+            buf.initial_bonus = buf.initial_bonus * 0.8 -- Decay initial bonus gradually
+            buf.edit_frequency = buf.edit_frequency * 0.9
+        end
+    end
 end
 
 local function add_frecency_buffer(bufnr)
-    if not is_useful_buffer(bufnr) then
-        return -- Ignore unwanted buffers
-    end
-
     if not frecency[bufnr] then
         frecency[bufnr] = {
             recentness = 1.0,  -- Starts at max, decays over time
@@ -85,13 +89,16 @@ local function calculate_score(bufnr)
     if not buf then return -math.huge end -- Lowest priority for unknown buffers
 
     local W1, W2, W3, W4 = 3.0, 1.0, 0.5, 2.0  -- Weights for tuning
-    return W1 * buf.recentness +
+    local score = W1 * buf.recentness +
         W2 * math.sqrt(buf.frequency) +
         W3 * buf.initial_bonus +
         W4 * buf.edit_frequency
+    vim.print(vim.api.nvim_buf_get_name(bufnr), score)
+    return score
 end
 
 local function sorted_buffers()
+    vim.print('CALCULATING SCORES')
     local buffers = vim.fn.getbufinfo({buflisted=true})
     local bufnrs = {}
 
