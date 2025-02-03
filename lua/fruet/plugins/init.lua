@@ -1,6 +1,6 @@
 local function exists(name)
-    local f=io.open(name,"r")
-    if f~=nil then io.close(f) return true else return false end
+    local f=vim.fn.isdirectory(vim.fn.expand(name))
+    return f == 1
 end
 
 return {
