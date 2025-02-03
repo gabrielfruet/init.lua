@@ -82,7 +82,7 @@ vim.api.nvim_create_autocmd("VimEnter",{
     group=group,
     callback=function ()
         local matches = vim.fn.filereadable("./rc.lua")
-        if matches then
+        if matches == 1 then
             vim.cmd("SourceScreen")
         end
     end
