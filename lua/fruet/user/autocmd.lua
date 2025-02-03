@@ -9,7 +9,7 @@ local function run()
     vim.api.nvim_create_autocmd('FileType', {
         pattern = 'qf',
         callback = function()
-            vim.api.nvim_buf_set_keymap(0, 'n', 'q', ':cclose<CR>', { noremap = true, silent = true })
+            vim.api.nvim_buf_set_keymap(0, 'n', 'q', ':cclose<CR>:lclose<cr>', { noremap = true, silent = true })
         end
     })
 
