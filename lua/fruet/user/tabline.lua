@@ -5,11 +5,7 @@ local M = {}
 local stline = require('fruet.user.statusline')
 local nvim_web_dev_get_icon = require'nvim-web-devicons'.get_icon
 
-local function hl_wrapper(hl)
-    return function (text)
-        return string.format('%%#%s#%s', hl, text)
-    end
-end
+local hl_wrapper = stline.hl_wrapper
 
 --- FRECENCY
 --- @class FrecencyBuffer
@@ -292,5 +288,6 @@ function M.run()
     setup_tabline()
     setup_frecency()
 end
+
 
 return M

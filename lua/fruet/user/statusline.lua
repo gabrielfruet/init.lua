@@ -1,5 +1,12 @@
 local M = {}
 
+local function hl_wrapper(hl)
+    return function (text)
+        return string.format('%%#%s#%s%%*', hl, text)
+    end
+end
+
+M.hl_wrapper = hl_wrapper
 
 local mode_map = {
   ['n']      = 'NORMAL',
@@ -51,6 +58,9 @@ local function set_hls()
 
     vim.api.nvim_set_hl(0, 'StatusLineFiletypeSel', { bg = colors_ft.fg, fg = colors_tlscp.bg, bold=true})
     vim.api.nvim_set_hl(0, 'StatusLineFiletypeSymbolSel', { fg = colors_ft.fg, bg = "none" })
+
+    vim.api.nvim_set_hl(0, 'StatusLineFiletypeUnsel', { bg = "none", fg = colors_tsctx.bg, bold=true})
+
     vim.api.nvim_set_hl(0, 'StatusLineFiletype', { bg = colors_tsctx.bg, fg = colors_tlscp.bg, bold=true})
     vim.api.nvim_set_hl(0, 'StatusLineFiletypeSymbol', { fg = colors_tsctx.bg, bg = "none" })
     vim.api.nvim_set_hl(0, 'StatusLineBranch', { bg = colors_tsctx.bg, fg = vim.g.foregroun })
@@ -61,6 +71,14 @@ local function set_hls()
 
     vim.api.nvim_set_hl(0, 'StatusLineInfoNC', { bg = "none", fg = vim.g.color8 })
     vim.api.nvim_set_hl(0, 'StatusLineInfoSymbolNC', { fg = vim.g.color8, bg = 'none' })
+    vim.api.nvim_set_hl(0, 'StatusLineUnix', {
+        fg = '#98971a',
+        bg = "none"
+    })
+    vim.api.nvim_set_hl(0, 'StatusLineFilePercent', {
+        fg='#b16286',
+        bg = 'none'
+    })
 
     vim.api.nvim_set_hl(0, 'TabLineTabSel', {
         fg = '#458588',
@@ -180,24 +198,27 @@ local function filename_widget(current_window)
     if current_window == 1 then
         symbolhl = 'StatusLineFiletypeSymbolSel'
         normalhl = 'StatusLineFiletypeSel'
+        normalhl = hl_wrapper('Normal')
     else
         symbolhl = 'StatusLineFiletypeSymbol'
-        normalhl = 'StatusLineFiletype'
+        -- normalhl = 'StatusLineFiletype'
+        normalhl = hl_wrapper('StatusLineFiletypeUnsel')
     end
     if filename == '' then
         return ""
     else
-        return table.concat{
-            '%#'.. symbolhl .. '#',  -- Highlight group
-            '',
-            '%#' .. normalhl .. '#',  -- Highlight group
-            M.get_icon(),
-            ' ',
-            '%t',  -- File name (tail)
-            '%#'.. symbolhl .. '#',  -- Highlight group
-            '',
-            '%*',  -- Reset highlight
-        }
+        return normalhl(M.get_icon() .. ' ' .. filename)
+        -- return table.concat{
+        --     '%#'.. symbolhl .. '#',  -- Highlight group
+        --     '',
+        --     '%#' .. normalhl .. '#',  -- Highlight group
+        --     M.get_icon(),
+        --     ' ',
+        --     '%t',  -- File name (tail)
+        --     '%#'.. symbolhl .. '#',  -- Highlight group
+        --     '',
+        --     '%*',  -- Reset highlight
+        -- }
     end
 end
 
@@ -364,6 +385,8 @@ _G._get_lsp_attached = get_lsp_attached
 local function mystatusline()
     local is_cwin = ((vim.g.statusline_winid == vim.fn.win_getid(vim.fn.winnr())) and 1 or 0)
     local infohl = is_cwin == 1 and '%#StatusLineInfo#' or '%#StatusLineInfoNC#'
+    local unix = hl_wrapper('StatusLineUnix')('UNIX')
+    local percent = hl_wrapper('StatusLineFilePercent')('%p%%')
     return table.concat({
         infohl,
         '%{%v:lua._get_diagnostics()%}',
@@ -378,7 +401,9 @@ local function mystatusline()
         infohl,
         '[%l/%L]',
         ' ',
-        '%p%%',
+        percent,
+        ' ',
+        unix,
         ' ',
     })
 end
