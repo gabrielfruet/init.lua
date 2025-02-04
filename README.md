@@ -44,18 +44,36 @@ C-w w - go to next window
 C-w c - close current window
 ```
 
+# Normal mode
 
-# Shell interaction
+### Text motions
 ```
+vis - visual select sentence(ends at '.', '!', '?', '\n', ' ' or '\t'
+```
+
+
+## Shell interaction
+```vim
+# Sending text to shell
+
 :!command — Run `command` in the shell.
 :'<,'>!command — Pipe the selected lines (`Visual mode`) to `command` and replace them with the output.
 :range!command — Apply `command` to a specific range (e.g., `:1,5!sort`).
+
+# Reading command output into buffer
+
 :r !command — Insert the output of `command` **below** the current line.
 :0r !command — Insert the output at the **top** of the file.
 :$r !command — Insert the output at the **end** of the file.
+
+# Replace entire buffer
+
 :%!command — Pipe the **entire file** through `command` and replace it with the output.
 :!ls — List files in the current directory.
 :'<,'>!sort — Sort selected lines.
+
+# Examples
+
 :%!python — Run the whole file as a Python script and replace with the output.
 :r !date — Insert the current date below the cursor.
 :cexpr system('command') — Send `command` output to the quickfix list.
