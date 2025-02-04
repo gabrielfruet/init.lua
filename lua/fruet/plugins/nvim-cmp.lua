@@ -15,6 +15,7 @@ return{
             "hrsh7th/cmp-nvim-lsp",
             'hrsh7th/cmp-nvim-lua',
             'hrsh7th/cmp-cmdline',
+            "kdheepak/cmp-latex-symbols",
             {
                 "zbirenbaum/copilot-cmp",
                 config = function ()
@@ -102,6 +103,10 @@ return{
                         { name = 'luasnip' }, -- For luasnip users.
                         { name = 'buffer' },
                         { name = 'vimtex' },
+                        { name = "latex_symbols",
+                            option = {
+                                strategy = 0, -- mixed
+                            },},
                     },
                     {
                         { name = 'copilot' },
