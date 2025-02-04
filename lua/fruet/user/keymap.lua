@@ -5,20 +5,12 @@ local function run()
 
     --save buffer
     map('n', '<c-s>', '<cmd>w!<cr>', noremap) -- S ave
-    map('n', '<c-q>', '<cmd>qa<cr>', noremap) -- Q uit
-    map('n', '<c-e>', '<cmd>qa!<cr>', noremap) -- E xit
 
     --remove highlights
     map('n', ',', '<cmd>noh<cr>', noremap)
 
     --escape key
     map('i', 'jk', '<esc>', noremap)
-
-    --window mov
-    -- map('n', '<c-h>', '<c-w>h', noremap)
-    -- map('n', '<c-j>', '<c-w>j', noremap)
-    -- map('n', '<c-k>', '<c-w>k', noremap)
-    -- map('n', '<c-l>', '<c-w>l', noremap)
 
     --buffer
     map('n', '<leader>bc', '<cmd>enew | bdelete #<cr>', noremap)
@@ -58,23 +50,14 @@ local function run()
     map('n', 'gD', vim.lsp.buf.declaration, noremap)
     map('n', 'gi', vim.lsp.buf.implementation, noremap)
     map('n', '<leader>ca', vim.lsp.buf.code_action, noremap)
-    map('n', '<leader>vrr', vim.lsp.buf.references, noremap)
-    map('n', '<leader>vrn',vim.lsp.buf.rename, noremap)
+    map('n', '<leader>vr', vim.lsp.buf.references, noremap)
+    map('n', '<leader>vn',vim.lsp.buf.rename, noremap)
     map('n', '<leader>rf', vim.lsp.buf.references, noremap)
     --map('n', '<leader>ws', vim.lsp.buf.workspace_symbol)
 
     --diagnostic
     map('n', '<leader>dv', vim.diagnostic.open_float, noremap)
     map('n', '<leader>dq', vim.diagnostic.setloclist, noremap)
-
-    --swapnig lines
-    map('n', '<S-Down>', "<cmd>move +1<cr>", silent)
-    map('n', '<S-Up>', "<cmd>move -2<cr>", silent)
-
-    --splits
-    map('n', '<leader>sv', '<cmd>vs<cr>')
-    map('n', '<leader>sh', '<cmd>sp<cr>')
-    map('n', '<leader>sc', '<cmd>close<cr>')
 
     --quickfix
     map('n', '<leader>co', '<cmd>copen<cr>')
