@@ -27,6 +27,23 @@ After installation, you can start Neovim and begin customizing the configuration
 
 # Cheatsheet
 
+## Jumps
+
+```
+C-i - go forth the jumplist
+C-o - go back the jumplist
+```
+
+## Windows
+
+```
+C-w f - open file under cursor on split
+C-w v - split current window vertically
+C-w s - split current window horizontally
+C-w w - go to next window
+C-w c - close current window
+```
+
 
 # Shell interaction
 ```
