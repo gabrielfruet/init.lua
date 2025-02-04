@@ -1,6 +1,8 @@
 return {
     "nvim-treesitter/nvim-treesitter",
-    --build=":TSUpdate",
+    dependencies={
+        "nvim-treesitter/nvim-treesitter-textobjects",
+    },
     config = function ()
         require'nvim-treesitter.configs'.setup{
             -- A list of parser names, or "all" (the five listed parsers should always be installed)
@@ -43,8 +45,19 @@ return {
                     scope_incremental = "grc",
                     node_decremental = "grm",
                 },
-            }
+            },
 
+            textobjects = {
+                select = {
+                    enable = true,
+                    keymaps = {
+                        ["af"] = "@function.outer",
+                        ["if"] = "@function.inner",
+                        ["ac"] = "@class.outer",
+                        ["ic"] = "@class.inner",
+                    }
+                }
+            }
         }
-    end
+    end,
 }
