@@ -7,7 +7,7 @@ return {
     config = function ()
         local nvim_lint = require('lint')
         nvim_lint.linters_by_ft = {
-            --python={'pylint'},
+            python={'ruff'},
             lua={'luacheck'},
             bash={'shellcheck'},
             shell={'shellcheck'},
@@ -31,10 +31,6 @@ return {
             '--globals', 'vim',        -- Declare 'vim' as a global
             '--',                      -- End of options for luacheck
         }
-
-        --for pylint to work with venv
-        --require('lint').linters.pylint.cmd = 'python'
-        --require('lint').linters.pylint.args = {'-m', 'pylint', '-f', 'json'}
 
     end
 }
