@@ -16,7 +16,6 @@ local function run()
     local function switch_to_buffer(bufrank)
         -- Check if the buffer exists
         local buffers = _G._sorted_buffers()
-        vim.print(buffers)
         local bufnr = buffers[bufrank]
         if bufnr == nil then return end
         if vim.fn.bufexists(bufnr) == 1 then
