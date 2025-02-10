@@ -20,6 +20,10 @@ return {
                 nvim_lint.try_lint()
             end,
         })
+        vim.api.nvim_create_user_command("Lint",function()
+                nvim_lint.try_lint()
+            end, {}
+        )
         vim.keymap.set('n', '<leader>li', function ()
             nvim_lint.try_lint()
         end, {noremap=true})
@@ -31,6 +35,5 @@ return {
             '--globals', 'vim',        -- Declare 'vim' as a global
             '--',                      -- End of options for luacheck
         }
-
     end
 }

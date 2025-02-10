@@ -30,7 +30,7 @@ return {
     {
         "ray-x/lsp_signature.nvim",
         event = "VeryLazy",
-        enabled=false,
+        enabled=true,
         config = function()
             require'lsp_signature'.setup {
             bind=true,
