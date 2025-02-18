@@ -41,10 +41,24 @@ end
 _G.select_python_cell = select_cell
 
 local bufnr = vim.api.nvim_get_current_buf()
-vim.keymap.set('n', '<leader>sc', function()
+
+vim.keymap.set('n', 'vc', function ()
+    select_cell()
+end, {buffer=bufnr})
+
+vim.keymap.set('n', 'sc', function()
     select_cell()
     vim.cmd('normal! "0y')
     local text = vim.fn.getreg('0')
+    vim.fn["slime#send"](text)
+end
+    , {buffer=bufnr})
+
+vim.keymap.set('n', 'ss', function()
+    vim.cmd('normal! vip')
+    vim.cmd('normal! "0y')
+    local text = vim.fn.getreg('0')
+    vim.print(text)
     vim.fn["slime#send"](text)
 end
     , {buffer=bufnr})
