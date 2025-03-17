@@ -13,8 +13,8 @@ local function configure_highlights()
         fg = vim.g.foreground,
         bg_dark = vim.g.color1,
         fg_dark = vim.g.color1,
-        bg_light = vim.g.color8,
-        fg_light = vim.g.color8,
+        bg_light = '#555555',
+        fg_light = '#555555',
         selected = hlutils.get_highlight_color("BlueItalic").fg,
         white = '#ffffff',
     }
@@ -79,6 +79,10 @@ local function configure_highlights()
     set_highlight('StatusLine', {bg = "none", fg=c.fg_light})
     set_highlight('StatusLineNC', {bg = "none", fg=c.fg_light})
     set_highlight('WinSeparator', {bg = 'none', fg=c.fg_light, sp="none"})
+
+    vim.api.nvim_set_hl(0, 'CellMarker', { fg = c.fg, bg = c.bg_light, bold = true })
+    vim.api.nvim_set_hl(0, '@cell_marker', { link = 'CellMarker' })
+
 end
 
 -- Example usage: Define a color scheme and apply it
