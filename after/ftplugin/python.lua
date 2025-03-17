@@ -2,7 +2,7 @@ vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt_local.foldmethod = "expr"
 
 local function select_cell()
-    local query = vim.treesitter.query.get("python", "comment_cell")
+    local query = vim.treesitter.query.get("python", "cell")
     if query == nil then
         vim.print("Query not found")
         return
@@ -47,18 +47,33 @@ vim.keymap.set('n', 'vc', function ()
 end, {buffer=bufnr})
 
 vim.keymap.set('n', 'sc', function()
+    local view = vim.fn.winsaveview()
+
     select_cell()
     vim.cmd('normal! "0y')
     local text = vim.fn.getreg('0')
     vim.fn["slime#send"](text)
-end
-    , {buffer=bufnr})
+
+    vim.fn.winrestview(view)
+end, {buffer=bufnr})
 
 vim.keymap.set('n', 'ss', function()
+    local view = vim.fn.winsaveview()
+
     vim.cmd('normal! vip')
     vim.cmd('normal! "0y')
     local text = vim.fn.getreg('0')
-    vim.print(text)
     vim.fn["slime#send"](text)
-end
-    , {buffer=bufnr})
+
+    vim.fn.winrestview(view)
+end, {buffer=bufnr})
+
+vim.keymap.set('v', 'sv', function()
+    local view = vim.fn.winsaveview()
+
+    vim.cmd('normal! "0y')
+    local text = vim.fn.getreg('0')
+    vim.fn["slime#send"](text)
+
+    vim.fn.winrestview(view)
+end)
