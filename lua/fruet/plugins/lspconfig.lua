@@ -40,11 +40,24 @@ return {
             --     venv= ".venv",
             -- }
             c.basedpyright.setup{
-                settings={
+                settings = {
+                    python = {
+                        analysis = {
+                            autoSearchPaths = true,
+                            useLibraryCodeForTypes = true,
+                            diagnosticMode = 'openFilesOnly',
+                        },
+                    },
                     basedpyright = {
                         typeCheckingMode="standard"
                     }
-                }
+
+                },
+                -- settings={
+                --     basedpyright = {
+                --         typeCheckingMode="standard"
+                --     }
+                -- }
             }
             c.clangd.setup{}
             c.cmake.setup{}
