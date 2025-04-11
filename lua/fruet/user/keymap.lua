@@ -39,13 +39,13 @@ local function run()
     map('n', '<leader>ya', [[ggVG"+y]], silent)
 
     --lsp
-    vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-        vim.lsp.handlers.hover, {
+    map('n', 'K', function()
+        vim.lsp.buf.hover{
             border = "rounded",
             title = " 󰈙 Documentation "
         }
-    )
-    map('n', 'K', vim.lsp.buf.hover, noremap)
+    end
+        , noremap)
     map('n', 'gd', vim.lsp.buf.definition, noremap)
     map('n', 'gD', vim.lsp.buf.declaration, noremap)
     map('n', 'gi', vim.lsp.buf.implementation, noremap)
