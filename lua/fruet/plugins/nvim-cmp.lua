@@ -95,7 +95,7 @@ return{
                     ['<C-Space>'] = cmp.mapping.complete(),
                     ['<C-x>'] = cmp.mapping.abort(),
                     ['<C-y>'] = cmp.mapping.confirm({ select = true, behavior=cmp.ConfirmBehavior.Replace }),-- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-                    ['<C-c>'] = require('minuet').make_cmp_map()
+                    -- ['<C-c>'] = require('minuet').make_cmp_map()
                 }),
                 sources = cmp.config.sources(
                     {
