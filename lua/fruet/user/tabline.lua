@@ -251,7 +251,7 @@ local function tabline_lhs()
     return table.concat{
         '%{%v:lua._get_mode()%}',
         '%{%v:lua._docker()%}',
-        '%{%v:lua._branch_name()%}',
+        -- '%{%v:lua._branch_name()%}',
         '',
         '%<',
         '%{%v:lua._tabs()%}',
