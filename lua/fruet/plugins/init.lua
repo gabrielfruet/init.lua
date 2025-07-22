@@ -65,6 +65,7 @@ return {
     },
     {
         "3rd/image.nvim",
+        enabled=false,
         build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
         opts = {}
     },
@@ -84,7 +85,8 @@ return {
     {
         dir="~/dev/lua/constructor",
         dev=true,
-        enabled=exists("~/dev/lua/constructor"),
+        -- enabled=exists("~/dev/lua/constructor"),
+        enabled=false,
         opts={}
     }
 }

@@ -83,7 +83,9 @@ vim.api.nvim_create_autocmd("VimEnter",{
     callback=function ()
         local matches = vim.fn.filereadable("./rc.lua")
         if matches == 1 then
-            vim.cmd("SourceScreen")
+            -- vim.cmd("SourceScreen")
+            source_rc("rc.lua")
+            print("Sourced rc.lua")
         end
     end
 })

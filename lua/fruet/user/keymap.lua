@@ -61,8 +61,8 @@ local function run()
 
     --quickfix
     map('n', '<leader>co', '<cmd>copen<cr>')
-    map('n', '[c', '<cmd>cnext<cr>')
-    map('n', ']c', '<cmd>cprevious<cr>')
+    map('n', '[d', '<cmd>cnext<cr>')
+    map('n', ']d', '<cmd>cprevious<cr>')
     map('n', '<leader>cc', '<cmd>cclose<cr>')
     map('n', '<leader>cj', '<cmd>cnewer<cr>')
     map('n', '<leader>ck', '<cmd>colder<cr>')
@@ -76,14 +76,14 @@ local function run()
     map('n', '<leader>lk', '<cmd>lolder<cr>')
 
     --correct o<esc>i behavior, identing correctly
-    vim.cmd[[function! IndentWithI()
-        if len(getline('.')) == 0
-            return "\"_cc"
-        else
-            return "i"
-        endif
-    endfunction
-    nnoremap <expr> i IndentWithI()]]
+    -- vim.cmd[[function! IndentWithI()
+    --     if len(getline('.')) == 0
+    --         return "\"_cc"
+    --     else
+    --         return "i"
+    --     endif
+    -- endfunction
+    -- nnoremap <expr> i IndentWithI()]]
 end
 
 return {
