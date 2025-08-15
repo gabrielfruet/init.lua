@@ -57,4 +57,5 @@ vim.lsp.config('gopls', {})
 vim.lsp.config('ocamllsp', {})
 vim.lsp.config('julials', {})
 vim.lsp.config('dockerls', {})
+vim.lsp.config('ts_ls', {})
 

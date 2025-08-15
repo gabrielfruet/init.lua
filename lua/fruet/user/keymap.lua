@@ -56,19 +56,24 @@ local function run()
     --map('n', '<leader>ws', vim.lsp.buf.workspace_symbol)
 
     --diagnostic
-    SHOW_DIAGNOSTICS = true
-    map('n', '<leader>dv', vim.diagnostic.open_float, noremap)
-    map('n', '<leader>dq', vim.diagnostic.setloclist, noremap)
-    map('n', '<leader>td', function ()
-        vim.diagnostic.config({ virtual_lines = SHOW_DIAGNOSTICS })
-        vim.diagnostic.config({ virtual_text = SHOW_DIAGNOSTICS })
-        SHOW_DIAGNOSTICS = not SHOW_DIAGNOSTICS
+    local SHOW_DIAGNOSTICS = true
+
+    vim.keymap.set('n', '<leader>dv', vim.diagnostic.open_float, { noremap = true })
+    vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, { noremap = true })
+    vim.keymap.set('n', '<leader>dt', function()
         print("Diagnostics virtual lines: " .. tostring(SHOW_DIAGNOSTICS))
-    end, noremap)
+        SHOW_DIAGNOSTICS = not SHOW_DIAGNOSTICS
+        vim.diagnostic.config({
+            virtual_lines = SHOW_DIAGNOSTICS,
+            virtual_text = SHOW_DIAGNOSTICS,
+        })
+        print("Diagnostics virtual lines: " .. tostring(SHOW_DIAGNOSTICS))
+    end, { noremap = true })
 
-    vim.diagnostic.config({ virtual_lines = SHOW_DIAGNOSTICS })
-    vim.diagnostic.config({ virtual_text = SHOW_DIAGNOSTICS })
-
+    vim.diagnostic.config({
+        virtual_lines = SHOW_DIAGNOSTICS,
+        virtual_text = SHOW_DIAGNOSTICS,
+    })
     --quickfix
     map('n', '<leader>co', '<cmd>copen<cr>')
     map('n', '[d', '<cmd>cnext<cr>')
